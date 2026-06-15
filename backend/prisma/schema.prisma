@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String
+  status       Status   @default(active)
+  createdAt    DateTime @default(now())
+
+  profile   Profile?
+  sessions  Session[]
+}
+
+model Profile {
+  id                  String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String     @unique @db.Uuid
+  businessName        String     @db.VarChar(100)
+  niche               String     @db.VarChar(100)
+  businessDescription String?
+  differentiators     String?
+  targetAudience      String?
+  platform            String?    @db.VarChar(50)
+  voiceTone           VoiceTone?
+  onboardingComplete  Boolean    @default(false)
+  updatedAt           DateTime   @updatedAt
+
+  user  User @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String   @db.Uuid
+  title           String?  @db.VarChar(255)
+  mode            Mode     @default(brainstorm)
+  createdAt       DateTime @default(now())
+  lastInteraction DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  messages  Message[]
+}
+
+model Message {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId String   @db.Uuid
+  role      Role
+  content   String
+  createdAt DateTime @default(now())
+
+  session  Session @relation(fields: [sessionId], references: [id])
+}
+
+enum Status {
+  active
+  blocked
+}
+
+enum VoiceTone {
+  professional
+  casual
+  inspirational
+  educational
+  humorous
+}
+
+enum Mode {
+  brainstorm
+  creation
+}
+
+enum Role {
+  user
+  assistant
+}
