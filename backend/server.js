@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
-const authRoutes = require('./routes/auth_routes');
+const authRoutes = require('./src/routes/auth_routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

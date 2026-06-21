@@ -2,6 +2,15 @@ const argon2 = require('argon2');
 const prisma = require('../utils/prisma');
 const jwt = require('jsonwebtoken');
 
+let dummyHash = null;
+argon2.hash('dummy_password_for_timing_protection' + process.env.PEPPER, {
+  memoryCost: 65536,
+  timeCost: 3,
+  parallelism: 4
+}).then(hash => {
+  dummyHash = hash;
+});
+
 // Register a new user
 async function register(name, email, password) {
 
@@ -45,7 +54,6 @@ async function login(email, password) {
   });
 
   // Verify password even if user doesn't exist to prevent timing attacks
-  const dummyHash = '$argon2id$v=19$m=65536,t=3,p=4$dummy$dummyhashfortimingprotection';
   const passwordToCheck = user ? user.passwordHash : dummyHash;
   const isValid = await argon2.verify(passwordToCheck, password + process.env.PEPPER);
 
