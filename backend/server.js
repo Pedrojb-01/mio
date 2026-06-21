@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./src/routes/auth_routes');
 const onboardingRoutes = require('./src/routes/onboarding_routes');
+const profileRoutes = require('./src/routes/profile_routes');
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/onboarding', onboardingRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
