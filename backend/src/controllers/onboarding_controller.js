@@ -37,9 +37,8 @@ async function completeOnboardingController(req, res) {
 
     return res.status(201).json({ message: 'Onboarding completed successfully', profile });
 
-  } catch (error) {
-    const status = error.statusCode || 500;
-    return res.status(status).json({ message: error.message });
+  } catch {
+    res.status(500).json('Internal server error')
   }
 }
 

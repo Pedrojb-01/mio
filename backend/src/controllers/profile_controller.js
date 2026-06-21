@@ -46,9 +46,8 @@ async function updateProfileController(req, res) {
     const profile = await updateProfile(userId, data);
     return res.status(200).json({ message: 'Profile updated successfully', profile });
 
-  } catch (error) {
-    const status = error.statusCode || 500;
-    return res.status(status).json({ message: error.message });
+  } catch {
+    res.status(500).json('Internal server error')
   }
 }
 
