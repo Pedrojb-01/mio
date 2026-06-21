@@ -5,6 +5,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./src/routes/auth_routes');
+const onboardingRoutes = require('./src/routes/onboarding_routes');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +22,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/onboarding', onboardingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
