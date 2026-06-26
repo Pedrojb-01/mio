@@ -22,4 +22,20 @@ async function updateProfile(userId, data) {
   return updatedProfile;
 }
 
-module.exports = { updateProfile };
+// Get user's profile
+async function getProfile(userId) {
+
+  const profile = await prisma.profile.findUnique({
+    where: { userId }
+  });
+
+  if (!profile) {
+    const error = new Error('Profile not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return profile;
+}
+
+module.exports = { updateProfile, getProfile };

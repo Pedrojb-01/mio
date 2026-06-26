@@ -1,4 +1,4 @@
-const { updateProfile } = require('../services/profile_service');
+const { updateProfile, getProfile } = require('../services/profile_service');
 
 const VALID_VOICE_TONES = ['professional', 'casual', 'inspirational', 'educational', 'humorous'];
 
@@ -51,4 +51,14 @@ async function updateProfileController(req, res) {
   }
 }
 
-module.exports = { updateProfileController };
+async function getProfileController(req, res) {
+  try {
+    const userId = req.user.id;
+    const profile = await getProfile(userId);
+    return res.status(200).json({ profile });
+  } catch {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+module.exports = { updateProfileController, getProfileController };
