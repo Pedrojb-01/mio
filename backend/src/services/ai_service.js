@@ -1,6 +1,6 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // Build system prompt with user's business context
 function buildSystemPrompt(profile, mode) {
@@ -29,11 +29,11 @@ ${modeInstruction}
 Always respond in the same language the user writes in. Keep responses focused, practical, and aligned with the user's voice tone.`;
 }
 
-// Convert messages from database format to Gemini format
-function formatHistoryForGemini(messages) {
+// Format history for Groq (same format as OpenAI)
+function formatHistoryForGroq(messages) {
   return messages.map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }]
+    role: msg.role === 'assistant' ? 'assistant' : 'user',
+    content: msg.content
   }));
 }
 
@@ -41,14 +41,7 @@ function formatHistoryForGemini(messages) {
 async function streamResponse(profile, mode, history, userMessage, res) {
   const systemPrompt = buildSystemPrompt(profile, mode);
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash-lite',
-    systemInstruction: systemPrompt
-  });
-
-  const chat = model.startChat({
-    history: formatHistoryForGemini(history)
-  });
+  const formattedHistory = formatHistoryForGroq(history);
 
   // SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
@@ -61,15 +54,24 @@ async function streamResponse(profile, mode, history, userMessage, res) {
 
   while (attempt < maxAttempts) {
     try {
-      const result = await chat.sendMessageStream(userMessage);
+      const stream = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...formattedHistory,
+          { role: 'user', content: userMessage }
+        ],
+        stream: true
+      });
 
-      for await (const chunk of result.stream) {
-        const text = chunk.text();
-        fullResponse += text;
-        res.write(`data: ${JSON.stringify({ text })}\n\n`);
+      for await (const chunk of stream) {
+        const text = chunk.choices[0]?.delta?.content || '';
+        if (text) {
+          fullResponse += text;
+          res.write(`data: ${JSON.stringify({ text })}\n\n`);
+        }
       }
 
-      // Signal end of stream
       res.write(`data: [DONE]\n\n`);
       res.end();
 
@@ -78,8 +80,6 @@ async function streamResponse(profile, mode, history, userMessage, res) {
     } catch (error) {
       attempt++;
       if (attempt >= maxAttempts) throw error;
-
-      // Exponential backoff: 1s, 2s
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
     }
   }
@@ -87,17 +87,20 @@ async function streamResponse(profile, mode, history, userMessage, res) {
 
 // Generate session title based on first exchange
 async function generateTitle(userMessage, aiResponse) {
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash-lite'
-  });
-
-  const prompt = `Based on this conversation exchange, generate a short and descriptive title (maximum 6 words) for this chat session. Return only the title, nothing else.
+  const completion = await groq.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    messages: [
+      {
+        role: 'user',
+        content: `Based on this conversation exchange, generate a short and descriptive title (maximum 6 words) for this chat session. Return only the title, nothing else.
 
 User: ${userMessage}
-Assistant: ${aiResponse}`;
+Assistant: ${aiResponse}`
+      }
+    ]
+  });
 
-  const result = await model.generateContent(prompt);
-  return result.response.text().trim();
+  return completion.choices[0].message.content.trim();
 }
 
 module.exports = { streamResponse, generateTitle };
