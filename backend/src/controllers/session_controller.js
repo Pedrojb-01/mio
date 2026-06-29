@@ -13,8 +13,19 @@ async function sendMessageController(req, res) {
     return res.status(400).json({ message: 'Message cannot be empty' });
   }
 
-  let session;
+  // Fetch profile and verify onboarding is complete
+  let profile;
+  try {
+    profile = await getProfile(userId);
+  } catch {
+    return res.status(403).json({ message: 'Profile not found' });
+  }
 
+  if (!profile.onboardingComplete) {
+    return res.status(403).json({ message: 'Onboarding must be completed before sending messages' });
+  }
+
+  let session;
   try {
     if (sessionId) {
       session = await getSession(sessionId, userId);
@@ -31,29 +42,21 @@ async function sendMessageController(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 
-  // Check if session is already streaming
   if (session.isStreaming) {
     return res.status(409).json({ message: 'Session is already processing a message' });
   }
 
-  // Lock session
   await prisma.session.update({
     where: { id: session.id },
     data: { isStreaming: true }
   });
 
   try {
-    const [profile, history] = await Promise.all([
-      getProfile(userId),
-      getSessionMessages(session.id)
-    ]);
-
+    const history = await getSessionMessages(session.id);
     const isFirstMessage = history.length === 0;
 
-    // Save user message
     await saveMessage(session.id, 'user', message.trim());
 
-    // Stream AI response
     const fullResponse = await streamResponse(
       profile,
       session.mode,
@@ -62,13 +65,9 @@ async function sendMessageController(req, res) {
       res
     );
 
-    // Save AI response
     await saveMessage(session.id, 'assistant', fullResponse);
-
-    // Update last interaction
     await touchSession(session.id);
 
-    // Generate and save title on first message
     if (isFirstMessage) {
       const title = await generateTitle(message.trim(), fullResponse);
       await updateSessionTitle(session.id, title);
