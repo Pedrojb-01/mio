@@ -36,12 +36,13 @@ model Profile {
 }
 
 model Session {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId          String   @db.Uuid
-  title           String?  @db.VarChar(255)
-  mode            Mode     @default(brainstorm)
-  createdAt       DateTime @default(now())
-  lastInteraction DateTime @default(now())
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String    @db.Uuid
+  title           String?   @db.VarChar(255)
+  mode            Mode      @default(brainstorm)
+  isStreaming     Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  lastInteraction DateTime  @default(now())
 
   user      User      @relation(fields: [userId], references: [id])
   messages  Message[]
