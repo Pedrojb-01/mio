@@ -1,8 +1,9 @@
-const { createSession, getSession, listSessions, deleteSession, renameSession, updateSessionTitle, touchSession } = require('../services/session_service');
+const { createSession, getSession, listSessions, deleteSession, renameSession, updateSessionTitle, touchSession, lockSession, unlockSession } = require('../services/session_service');
 const { saveMessage, getSessionMessages } = require('../services/message_service');
 const { getProfile } = require('../services/profile_service');
 const { streamResponse, generateTitle } = require('../services/ai_service');
-const prisma = require('../utils/prisma');
+
+const VALID_MODES = ['brainstorm', 'creation'];
 
 // Send a message — creates session if it doesn't exist
 async function sendMessageController(req, res) {
@@ -17,8 +18,11 @@ async function sendMessageController(req, res) {
   let profile;
   try {
     profile = await getProfile(userId);
-  } catch {
-    return res.status(403).json({ message: 'Profile not found' });
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 
   if (!profile.onboardingComplete) {
@@ -30,8 +34,8 @@ async function sendMessageController(req, res) {
     if (sessionId) {
       session = await getSession(sessionId, userId);
     } else {
-      if (!mode) {
-        return res.status(400).json({ message: 'Mode is required to start a new session' });
+      if (!mode || !VALID_MODES.includes(mode)) {
+        return res.status(400).json({ message: 'Mode must be brainstorm or creation' });
       }
       session = await createSession(userId, mode);
     }
@@ -46,10 +50,7 @@ async function sendMessageController(req, res) {
     return res.status(409).json({ message: 'Session is already processing a message' });
   }
 
-  await prisma.session.update({
-    where: { id: session.id },
-    data: { isStreaming: true }
-  });
+  await lockSession(session.id);
 
   try {
     const history = await getSessionMessages(session.id);
@@ -73,11 +74,15 @@ async function sendMessageController(req, res) {
       await updateSessionTitle(session.id, title);
     }
 
+  } catch (error) {
+    if (res.headersSent) {
+      res.write(`data: ${JSON.stringify({ error: 'Stream failed' })}\n\n`);
+      res.end();
+    } else {
+      res.status(500).json({ message: 'Failed to process message' });
+    }
   } finally {
-    await prisma.session.update({
-      where: { id: session.id },
-      data: { isStreaming: false }
-    });
+    await unlockSession(session.id);
   }
 }
 

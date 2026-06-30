@@ -59,7 +59,7 @@ async function logoutController(req, res) {
     return res.status(200).json({ message: 'Logout successful' });
 
   } catch {
-    res.status(500).json('Internal server error')
+    return res.status(500).json({ message: 'Internal server error' })
   }
 }
 

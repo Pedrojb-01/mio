@@ -79,6 +79,22 @@ async function touchSession(sessionId) {
   });
 }
 
+// Lock session — marks it as currently streaming
+async function lockSession(sessionId) {
+  await prisma.session.update({
+    where: { id: sessionId },
+    data: { isStreaming: true }
+  });
+}
+
+// Unlock session — marks it as no longer streaming
+async function unlockSession(sessionId) {
+  await prisma.session.update({
+    where: { id: sessionId },
+    data: { isStreaming: false }
+  });
+}
+
 module.exports = {
   createSession,
   getSession,
@@ -86,5 +102,7 @@ module.exports = {
   deleteSession,
   updateSessionTitle,
   touchSession,
-  renameSession
+  renameSession,
+  lockSession,
+  unlockSession
 };
