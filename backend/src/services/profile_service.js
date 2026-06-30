@@ -1,4 +1,5 @@
 const prisma = require('../utils/prisma');
+const AppError = require('../utils/app_error');
 
 // Update user's profile
 async function updateProfile(userId, data) {
@@ -9,9 +10,7 @@ async function updateProfile(userId, data) {
   });
 
   if (!existingProfile) {
-    const error = new Error('Profile not found');
-    error.statusCode = 404;
-    throw error;
+    throw new AppError('Profile not found', 404);
   }
 
   const updatedProfile = await prisma.profile.update({
@@ -30,9 +29,7 @@ async function getProfile(userId) {
   });
 
   if (!profile) {
-    const error = new Error('Profile not found');
-    error.statusCode = 404;
-    throw error;
+    throw new AppError('Profile not found', 404);
   }
 
   return profile;

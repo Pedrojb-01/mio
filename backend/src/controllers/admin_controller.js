@@ -24,7 +24,7 @@ async function updateUserStatusController(req, res) {
     return res.status(200).json({ message: 'User status updated successfully', user });
 
   } catch (error) {
-    if (error.statusCode) {
+    if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
     return res.status(500).json({ message: 'Internal server error' });

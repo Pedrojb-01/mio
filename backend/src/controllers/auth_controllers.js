@@ -11,8 +11,11 @@ async function registerController(req, res) {
     const user = await register(name, email, password);
     return res.status(201).json({ message: 'User registered successfully', user });
 
-  } catch {
-    res.status(500).json('Internal server error')
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 
@@ -35,8 +38,11 @@ async function loginController(req, res) {
 
     return res.status(200).json({ message: 'Login successful', user });
 
-  } catch {
-    res.status(500).json('Internal server error')
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

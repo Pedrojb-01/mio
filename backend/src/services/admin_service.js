@@ -1,4 +1,5 @@
 const prisma = require('../utils/prisma');
+const AppError = require('../utils/app_error');
 
 // List all users
 async function listUsers() {
@@ -24,15 +25,11 @@ async function updateUserStatus(userId, status) {
   });
 
   if (!user) {
-    const error = new Error('User not found');
-    error.statusCode = 404;
-    throw error;
+    throw new AppError('User not found', 404);
   }
 
   if (user.role === 'admin') {
-    const error = new Error('Cannot change status of an admin user');
-    error.statusCode = 403;
-    throw error;
+    throw new AppError('Cannot change status of an admin user', 403);
   }
 
   const updatedUser = await prisma.user.update({

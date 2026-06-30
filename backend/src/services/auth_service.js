@@ -1,6 +1,7 @@
 const argon2 = require('argon2');
 const prisma = require('../utils/prisma');
 const jwt = require('jsonwebtoken');
+const AppError = require('../utils/app_error');
 
 let dummyHash = null;
 argon2.hash('dummy_password_for_timing_protection' + process.env.PEPPER, {
@@ -20,9 +21,7 @@ async function register(name, email, password) {
   });
 
   if (existingUser) {
-    const error = new Error('Email already in use');
-    error.statusCode = 409;
-    throw error;
+    throw new AppError('Invalid credentials', 409);
   }
 
   // Hash the password with pepper
@@ -58,15 +57,11 @@ async function login(email, password) {
   const isValid = await argon2.verify(passwordToCheck, password + process.env.PEPPER);
 
   if (!user || !isValid) {
-    const error = new Error('Invalid credentials');
-    error.statusCode = 401;
-    throw error;
+    throw new AppError('Invalid credentials', 401);
   }
 
   if (user.status === 'blocked') {
-    const error = new Error('Account blocked');
-    error.statusCode = 403;
-    throw error;
+    throw new AppError('Invalid credentials', 403);
   }
 
   // Generate JWT
@@ -81,9 +76,6 @@ async function login(email, password) {
 
 // Logout user (stateless — clears the cookie on the client side)
 function logout() {
-  // No database interaction needed.
-  // The actual cookie clearing happens in the controller.
-  // Post-MVP: add token to a Redis blocklist here.
   return true;
 }
 

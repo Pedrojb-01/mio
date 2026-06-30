@@ -1,4 +1,5 @@
 const prisma = require('../utils/prisma');
+const AppError = require('../utils/app_error');
 
 // Create a new session
 async function createSession(userId, mode) {
@@ -19,15 +20,11 @@ async function getSession(sessionId, userId) {
   });
 
   if (!session) {
-    const error = new Error('Session not found');
-    error.statusCode = 404;
-    throw error;
+    throw new AppError('Session not found', 404);
   }
 
   if (session.userId !== userId) {
-    const error = new Error('Access denied');
-    error.statusCode = 403;
-    throw error;
+    throw new AppError('Access denied', 403);
   }
 
   return session;
@@ -65,9 +62,7 @@ async function renameSession(sessionId, userId, title) {
   await getSession(sessionId, userId);
 
   if (!title || title.trim() === '') {
-    const error = new Error('Title cannot be empty');
-    error.statusCode = 400;
-    throw error;
+    throw new AppError('Title cannot be empty', 400);
   }
 
   await prisma.session.update({

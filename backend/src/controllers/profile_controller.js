@@ -46,8 +46,11 @@ async function updateProfileController(req, res) {
     const profile = await updateProfile(userId, data);
     return res.status(200).json({ message: 'Profile updated successfully', profile });
 
-  } catch {
-    res.status(500).json('Internal server error')
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 
@@ -56,8 +59,11 @@ async function getProfileController(req, res) {
     const userId = req.user.id;
     const profile = await getProfile(userId);
     return res.status(200).json({ profile });
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

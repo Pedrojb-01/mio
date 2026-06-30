@@ -1,4 +1,5 @@
 const prisma = require('../utils/prisma');
+const AppError = require('../utils/app_error');
 
 // Complete onboarding by creating the user's profile
 async function completeOnboarding(userId, data) {
@@ -18,9 +19,7 @@ async function completeOnboarding(userId, data) {
   });
 
   if (existingProfile) {
-    const error = new Error('Onboarding already completed');
-    error.statusCode = 409;
-    throw error;
+    throw new AppError('Onboarding already completed', 409);
   }
 
   // Create profile with all onboarding data

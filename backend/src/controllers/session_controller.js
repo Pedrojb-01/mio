@@ -36,7 +36,7 @@ async function sendMessageController(req, res) {
       session = await createSession(userId, mode);
     }
   } catch (error) {
-    if (error.statusCode) {
+    if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
     return res.status(500).json({ message: 'Internal server error' });
@@ -98,7 +98,7 @@ async function getSessionController(req, res) {
     const messages = await getSessionMessages(session.id);
     return res.status(200).json({ session, messages });
   } catch (error) {
-    if (error.statusCode) {
+    if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
     return res.status(500).json({ message: 'Internal server error' });
@@ -111,7 +111,7 @@ async function deleteSessionController(req, res) {
     await deleteSession(req.params.id, req.user.id);
     return res.status(200).json({ message: 'Session deleted successfully' });
   } catch (error) {
-    if (error.statusCode) {
+    if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
     return res.status(500).json({ message: 'Internal server error' });
@@ -125,7 +125,7 @@ async function renameSessionController(req, res) {
     await renameSession(req.params.id, req.user.id, title);
     return res.status(200).json({ message: 'Session renamed successfully' });
   } catch (error) {
-    if (error.statusCode) {
+    if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
     return res.status(500).json({ message: 'Internal server error' });

@@ -3,7 +3,6 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const rateLimit = require('express-rate-limit');
 
 const authRoutes = require('./src/routes/auth_routes');
 const onboardingRoutes = require('./src/routes/onboarding_routes');
