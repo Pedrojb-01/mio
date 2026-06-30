@@ -8,6 +8,7 @@ const authRoutes = require('./src/routes/auth_routes');
 const onboardingRoutes = require('./src/routes/onboarding_routes');
 const profileRoutes = require('./src/routes/profile_routes');
 const sessionRoutes = require('./src/routes/session_routes');
+const adminRoutes = require('./src/routes/admin_routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
