@@ -21,18 +21,24 @@ async function updateProfile(userId, data) {
   return updatedProfile;
 }
 
-// Get user's profile
-async function getProfile(userId) {
+// Get user and profile
+async function getProfileWithUser(userId) {
+  const [user, profile] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true }
+    }),
+    prisma.profile.findUnique({
+      where: { userId }
+    })
+  ]);
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId }
-  });
-
-  if (!profile) {
-    throw new AppError('Profile not found', 404);
-  }
-
-  return profile;
+  return {
+    id:      user.id,
+    name:    user.name,
+    email:   user.email,
+    profile: profile ?? null,
+  };
 }
 
-module.exports = { updateProfile, getProfile };
+module.exports = { getProfileWithUser, updateProfile };

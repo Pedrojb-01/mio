@@ -1,4 +1,4 @@
-const { updateProfile, getProfile } = require('../services/profile_service');
+const { getProfileWithUser, updateProfile } = require('../services/profile_service');
 
 const VALID_VOICE_TONES = ['professional', 'casual', 'inspirational', 'educational', 'humorous'];
 
@@ -57,8 +57,8 @@ async function updateProfileController(req, res) {
 async function getProfileController(req, res) {
   try {
     const userId = req.user.id;
-    const profile = await getProfile(userId);
-    return res.status(200).json({ profile });
+    const data = await getProfileWithUser(userId);
+    return res.status(200).json(data);
   } catch (error) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
