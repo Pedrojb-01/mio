@@ -58,6 +58,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
     try {
       await sessionsApi.remove(session.id)
       onDelete(session.id)
+      window.dispatchEvent(new CustomEvent('session-updated'))
     } catch { /* silent — card stays */ }
   }
 

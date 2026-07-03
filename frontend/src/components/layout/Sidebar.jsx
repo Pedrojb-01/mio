@@ -160,9 +160,12 @@ export default function Sidebar() {
 
     fetchRecent()
 
-    // Refresh when a session title is updated from chat
     window.addEventListener('session-title-updated', fetchRecent)
-    return () => window.removeEventListener('session-title-updated', fetchRecent)
+    window.addEventListener('session-updated', fetchRecent)
+    return () => {
+      window.removeEventListener('session-title-updated', fetchRecent)
+      window.removeEventListener('session-updated', fetchRecent)
+    }
   }, [])
 
   const navLinkClass = ({ isActive }) => `
