@@ -42,6 +42,8 @@ export default function SessionCard({ session, onDelete, onRename }) {
     try {
       await sessionsApi.rename(session.id, clean)
       onRename(session.id, clean)
+      onRename(session.id, clean)
+      window.dispatchEvent(new CustomEvent('session-updated'))
     } catch {
       setTitle(session.title ?? 'Untitled session')
     }
