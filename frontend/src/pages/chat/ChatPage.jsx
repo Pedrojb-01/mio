@@ -133,6 +133,11 @@ export default function ChatPage() {
           return updated
         })
       },
+      onTitle: (title) => {
+        setSession(prev => ({ ...prev, title }))
+        // Notify sidebar to refresh sessions
+        window.dispatchEvent(new CustomEvent('session-title-updated'))
+      },
       onDone: () => {
         setIsStreaming(false)
         inputRef.current?.focus()
@@ -186,7 +191,7 @@ export default function ChatPage() {
 
           <div className="flex-1 min-w-0">
             <h1 className="text-sm font-semibold text-primary truncate">
-              {session?.title ?? 'Loading...'}
+              {session?.title ?? 'New session'}
             </h1>
             <p className="text-xs text-muted">
               {session?.mode === 'brainstorm' ? 'Brainstorm' : 'Create Post'}

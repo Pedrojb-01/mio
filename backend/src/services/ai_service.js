@@ -72,9 +72,6 @@ async function streamResponse(profile, mode, history, userMessage, res) {
         }
       }
 
-      res.write(`data: [DONE]\n\n`);
-      res.end();
-
       return fullResponse;
 
     } catch (error) {

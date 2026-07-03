@@ -154,10 +154,15 @@ export default function Sidebar() {
         const data = await sessionsApi.list()
         setSessions(data.sessions.slice(0, 5))
       } catch {
-        // Non-critical — sidebar works without recent sessions
+        // Non-critical
       }
     }
+
     fetchRecent()
+
+    // Refresh when a session title is updated from chat
+    window.addEventListener('session-title-updated', fetchRecent)
+    return () => window.removeEventListener('session-title-updated', fetchRecent)
   }, [])
 
   const navLinkClass = ({ isActive }) => `

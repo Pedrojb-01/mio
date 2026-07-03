@@ -74,9 +74,13 @@ async function sendMessageController(req, res) {
     await touchSession(session.id);
 
     if (isFirstMessage) {
-      const title = await generateTitle(message.trim(), fullResponse);
-      await updateSessionTitle(session.id, title);
+      const title = await generateTitle(message.trim(), fullResponse)
+      await updateSessionTitle(session.id, title)
+      res.write(`data: ${JSON.stringify({ title })}\n\n`)
     }
+
+    res.write(`data: [DONE]\n\n`)
+    res.end()
 
   } catch (error) {
     if (res.headersSent) {
