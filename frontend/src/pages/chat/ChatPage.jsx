@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sessionsApi } from '../../api/sessions.js'
-import { messagesApi, streamMessage } from '../../api/messages.js'
+import { streamMessage } from '../../api/messages.js'
 import { sanitizeField } from '../../utils/sanitize.js'
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 
@@ -82,12 +82,9 @@ export default function ChatPage() {
   useEffect(() => {
     async function loadChat() {
       try {
-        const [sessionData, messagesData] = await Promise.all([
-          sessionsApi.get(id),
-          messagesApi.list(id),
-        ])
-        setSession(sessionData.session)
-        setMessages(messagesData.messages)
+        const data = await sessionsApi.get(id)
+        setSession(data.session)
+        setMessages(data.messages)  // ← já vem junto
       } catch {
         setError('Failed to load chat. Please go back and try again.')
       } finally {

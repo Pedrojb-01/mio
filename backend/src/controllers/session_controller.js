@@ -1,6 +1,6 @@
 const { createSession, getSession, listSessions, deleteSession, renameSession, updateSessionTitle, touchSession, lockSession, unlockSession } = require('../services/session_service');
 const { saveMessage, getSessionMessages } = require('../services/message_service');
-const { getProfile } = require('../services/profile_service');
+const { getProfileWithUser } = require('../services/profile_service');
 const { streamResponse, generateTitle } = require('../services/ai_service');
 
 const VALID_MODES = ['brainstorm', 'creation'];
@@ -8,7 +8,9 @@ const VALID_MODES = ['brainstorm', 'creation'];
 // Send a message — creates session if it doesn't exist
 async function sendMessageController(req, res) {
   const userId = req.user.id;
-  const { message, mode, sessionId } = req.body;
+  const { message, mode } = req.body;
+  const sessionId = req.params.id;
+
 
   if (!message || message.trim() === '') {
     return res.status(400).json({ message: 'Message cannot be empty' });
@@ -17,7 +19,8 @@ async function sendMessageController(req, res) {
   // Fetch profile and verify onboarding is complete
   let profile;
   try {
-    profile = await getProfile(userId);
+    const data = await getProfileWithUser(userId);
+    profile = data.profile;
   } catch (error) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
@@ -25,19 +28,20 @@ async function sendMessageController(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 
-  if (!profile.onboardingComplete) {
+  if (!profile || !profile.onboardingComplete) {
     return res.status(403).json({ message: 'Onboarding must be completed before sending messages' });
   }
 
   let session;
   try {
-    if (sessionId) {
-      session = await getSession(sessionId, userId);
-    } else {
-      if (!mode || !VALID_MODES.includes(mode)) {
-        return res.status(400).json({ message: 'Mode must be brainstorm or creation' });
-      }
-      session = await createSession(userId, mode);
+    if (!sessionId) {
+      return res.status(400).json({ message: 'sessionId is required' });
+    }
+    session = await getSession(sessionId, userId);
+
+    // Validate mode if provided — session.mode takes precedence
+    if (mode && !VALID_MODES.includes(mode)) {
+      return res.status(400).json({ message: 'Mode must be brainstorm or creation' });
     }
   } catch (error) {
     if (error.isAppError) {
@@ -137,10 +141,31 @@ async function renameSessionController(req, res) {
   }
 }
 
+// Create session explicitly
+async function createSessionController(req, res) {
+  try {
+    const userId = req.user.id;
+    const { mode } = req.body;
+
+    if (!mode || !VALID_MODES.includes(mode)) {
+      return res.status(400).json({ message: 'Mode must be brainstorm or creation' });
+    }
+
+    const session = await createSession(userId, mode);
+    return res.status(201).json({ session });
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 module.exports = {
   sendMessageController,
   listSessionsController,
   getSessionController,
   deleteSessionController,
-  renameSessionController
+  renameSessionController,
+  createSessionController
 };

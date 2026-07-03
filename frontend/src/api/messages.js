@@ -1,9 +1,5 @@
 import { api } from './client.js'
 
-export const messagesApi = {
-  list: (sessionId) => api.get(`/sessions/${sessionId}/messages`),
-}
-
 // SSE streaming — can't use EventSource because it doesn't support
 // POST requests or cookies. We use fetch + ReadableStream instead.
 export function streamMessage({ sessionId, content, onChunk, onDone, onError }) {
@@ -15,7 +11,7 @@ export function streamMessage({ sessionId, content, onChunk, onDone, onError }) 
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ message: content }),
   })
     .then(async response => {
       if (!response.ok) {
