@@ -100,6 +100,14 @@ export default function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Auto-resize textarea as user types
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`
+    }
+  }, [input])
+
   // ─── Send message ───────────────────────────────────────────────────────────
 
   const handleSend = useCallback(() => {
@@ -255,7 +263,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input area */}
-        <div className="shrink-0 border-t border-border bg-white px-6 py-4">
+        <div className="shrink-0 px-6 py-4">
           <div className="max-w-2xl mx-auto">
 
             {/* Streaming error */}
@@ -265,7 +273,7 @@ export default function ChatPage() {
               </p>
             )}
 
-            <div className={`flex items-end gap-3 bg-surface border rounded-xl px-4 py-3
+            <div className={`relative flex items-start gap-3 bg-surface border rounded-xl px-4 py-3
               transition-colors duration-150
               ${isStreaming ? 'border-border' : 'border-border focus-within:border-accent'}`}>
               <textarea
@@ -282,19 +290,10 @@ export default function ChatPage() {
                 maxLength={MAX_LENGTH}
                 rows={1}
                 className="flex-1 bg-transparent text-sm text-primary placeholder:text-muted
-                  resize-none outline-none max-h-36 overflow-y-auto
-                  disabled:cursor-not-allowed"
+                  resize-none outline-none min-h-[48px] max-h-72 overflow-y-auto
+                  disabled:cursor-not-allowed pt-3 pr-10"
                 style={{ scrollbarWidth: 'none' }}
               />
-
-              {/* Character counter — shows when nearing limit */}
-              {input.length > MAX_LENGTH * 0.8 && (
-                <span className={`text-xs shrink-0 ${
-                  input.length >= MAX_LENGTH ? 'text-red-500' : 'text-muted'
-                }`}>
-                  {input.length}/{MAX_LENGTH}
-                </span>
-              )}
 
               {/* Send button */}
               <button
@@ -302,7 +301,7 @@ export default function ChatPage() {
                 disabled={!canSend}
                 aria-label="Send message"
                 className={`
-                  shrink-0 h-8 w-8 rounded-lg flex items-center justify-center
+                  absolute bottom-3 right-3 shrink-0 h-8 w-8 rounded-lg flex items-center justify-center
                   transition-colors duration-150
                   ${canSend
                     ? 'bg-accent hover:bg-accent-hover cursor-pointer'
@@ -314,9 +313,18 @@ export default function ChatPage() {
               </button>
             </div>
 
-            <p className="text-xs text-muted text-center mt-2">
-              Enter to send · Shift+Enter for new line
-            </p>
+            <div className="relative mt-2">
+              <p className="text-xs text-muted text-center">
+                Enter to send · Shift+Enter for new line
+              </p>
+              {input.length > MAX_LENGTH * 0.8 && (
+                <span className={`absolute right-0 top-0 text-xs ${
+                  input.length >= MAX_LENGTH ? 'text-red-500' : 'text-muted'
+                }`}>
+                  {input.length}/{MAX_LENGTH}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
