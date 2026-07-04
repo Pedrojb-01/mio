@@ -97,7 +97,15 @@ export default function ProfilePage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!validate()) return
+    if (!validate()) {
+      // Scroll to first error field
+      const firstError = document.querySelector('[aria-invalid="true"]')
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        firstError.focus()
+      }
+      return
+    }
 
     setIsLoading(true)
     setServerError(null)
