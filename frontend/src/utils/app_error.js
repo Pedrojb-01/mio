@@ -5,5 +5,3 @@ export class AppError extends Error {
     this.isAppError = true
   }
 }
-
-module.exports = AppError;

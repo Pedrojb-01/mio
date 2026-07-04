@@ -62,8 +62,12 @@ export default function SessionsPage({ mode, title }) {
     try {
       const data = await sessionsApi.create({ mode })
       navigate(`/chat/${data.session.id}`)
-    } catch {
-      setError('Failed to create session. Please try again.')
+    } catch (error) {
+      if (error.isAppError) {
+        setError(error.message)
+      } else {
+        setError('Failed to create session. Please try again.')
+      }
     } finally {
       setIsCreating(false)
     }
