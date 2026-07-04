@@ -30,3 +30,27 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Custom scrollbar for textareas */
+textarea::-webkit-scrollbar {
+  width: 7px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+  min-height: 40px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  cursor: default;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+  background-clip: padding-box;
+}
