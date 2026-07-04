@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { profileApi } from '../api/profile.js'
@@ -12,6 +12,8 @@ import DashboardLayout from '../components/layout/DashboardLayout.jsx'
 import Button from '../components/ui/Button.jsx'
 import Input from '../components/ui/Input.jsx'
 import Textarea from '../components/ui/Textarea.jsx'
+import Toast from '../components/ui/Toast.jsx'
+
 
 const VOICE_TONES = [
   { value: 'professional',  label: 'Professional',  emoji: '💼' },
@@ -53,21 +55,29 @@ export default function ProfilePage() {
 
   const [errors, setErrors]           = useState({})
   const [serverError, setServerError] = useState(null)
-  const [success, setSuccess]         = useState(false)
+  const [toast, setToast] = useState(null)
   const [isLoading, setIsLoading]     = useState(false)
+
+  const hasChanges = useMemo(() => (
+    fields.name                !== (user?.name                    ?? '') ||
+    fields.businessName        !== (profile?.businessName         ?? '') ||
+    fields.niche               !== (profile?.niche                ?? '') ||
+    fields.businessDescription !== (profile?.businessDescription  ?? '') ||
+    fields.targetAudience      !== (profile?.targetAudience       ?? '') ||
+    fields.differentiators     !== (profile?.differentiators      ?? '') ||
+    fields.voiceTone           !== (profile?.voiceTone            ?? '')
+  ), [fields, user, profile])
 
   function handleChange(e) {
     const { name, value } = e.target
     setFields(prev => ({ ...prev, [name]: value }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
     if (serverError)  setServerError(null)
-    if (success)      setSuccess(false)
   }
 
   function handleToneSelect(value) {
     setFields(prev => ({ ...prev, voiceTone: value }))
     if (errors.voiceTone) setErrors(prev => ({ ...prev, voiceTone: null }))
-    if (success) setSuccess(false)
   }
 
   function validate() {
@@ -109,7 +119,6 @@ export default function ProfilePage() {
 
     setIsLoading(true)
     setServerError(null)
-    setSuccess(false)
 
     try {
       const body = {
@@ -124,8 +133,7 @@ export default function ProfilePage() {
 
       const data = await profileApi.update(body)
       updateProfile(data.profile)
-      setSuccess(true)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      setToast({ message: 'Profile updated successfully.', type: 'success' })
     } catch (error) {
       if (error.isAppError) {
         setServerError(error.message)
@@ -180,13 +188,6 @@ export default function ProfilePage() {
           <div role="alert" className="mb-6 px-4 py-3 rounded-lg bg-red-50
             border border-red-200 text-sm text-red-600">
             {serverError}
-          </div>
-        )}
-
-        {success && (
-          <div role="status" className="mb-6 px-4 py-3 rounded-lg bg-green-50
-            border border-green-200 text-sm text-green-700">
-            Profile updated successfully.
           </div>
         )}
 
@@ -315,13 +316,22 @@ export default function ProfilePage() {
 
           {/* Submit */}
           <div className="flex justify-end pb-4">
-            <Button type="submit" isLoading={isLoading} disabled={isLoading}>
+            <Button type="submit" isLoading={isLoading} disabled={isLoading || !hasChanges}>
               Save changes
             </Button>
           </div>
 
         </form>
       </div>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
     </DashboardLayout>
   )
 }
