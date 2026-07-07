@@ -48,7 +48,7 @@ function MessageBubble({ role, content }) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div className={`
-        max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap
+        max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden
         ${isUser
           ? 'bg-accent text-white rounded-br-sm'
           : 'bg-white border border-border text-primary rounded-bl-sm'
@@ -273,9 +273,12 @@ export default function ChatPage() {
               </p>
             )}
 
-            <div className={`relative flex items-start gap-3 bg-surface border rounded-xl px-4 py-3
-              transition-colors duration-150
-              ${isStreaming ? 'border-border' : 'border-border focus-within:border-accent'}`}>
+            <div
+              onClick={() => inputRef.current?.focus()}
+              className={`bg-surface border rounded-xl px-4 py-2 cursor-text
+                transition-colors duration-150
+                ${isStreaming ? 'border-border' : 'border-border focus-within:border-accent'}`}>
+
               <textarea
                 ref={inputRef}
                 value={input}
@@ -289,28 +292,30 @@ export default function ChatPage() {
                 disabled={isStreaming || isLoadingHistory}
                 maxLength={MAX_LENGTH}
                 rows={1}
-                className="flex-1 bg-transparent text-sm text-primary placeholder:text-muted
-                  resize-none outline-none min-h-[48px] max-h-72 overflow-y-auto
-                  disabled:cursor-not-allowed pt-3 pr-10"
-                style={{ scrollbarWidth: 'none' }}
+                className="w-full bg-transparent text-sm text-primary placeholder:text-muted
+                  resize-none outline-none max-h-72 overflow-y-auto
+                  disabled:cursor-not-allowed py-2"
+                style={{ scrollbarWidth: 'thin' }}
               />
 
               {/* Send button */}
-              <button
-                onClick={handleSend}
-                disabled={!canSend}
-                aria-label="Send message"
-                className={`
-                  absolute bottom-3 right-3 shrink-0 h-8 w-8 rounded-lg flex items-center justify-center
-                  transition-colors duration-150
-                  ${canSend
-                    ? 'bg-accent hover:bg-accent-hover cursor-pointer'
-                    : 'bg-border cursor-not-allowed'
-                  }
-                `}
-              >
-                {isStreaming ? <IconSpinner /> : <IconSend disabled={!canSend} />}
-              </button>
+              <div className="flex justify-end pb-1">
+                <button
+                  onClick={handleSend}
+                  disabled={!canSend}
+                  aria-label="Send message"
+                  className={`
+                    shrink-0 h-8 w-8 rounded-lg flex items-center justify-center
+                    transition-colors duration-150
+                    ${canSend
+                      ? 'bg-accent hover:bg-accent-hover cursor-pointer'
+                      : 'bg-border cursor-not-allowed'
+                    }
+                  `}
+                >
+                  {isStreaming ? <IconSpinner /> : <IconSend disabled={!canSend} />}
+                </button>
+              </div>
             </div>
 
             <div className="relative mt-2">
