@@ -108,6 +108,13 @@ export default function ChatPage() {
     }
   }, [input])
 
+  // Focus input on load and after streaming ends
+  useEffect(() => {
+    if (!isLoadingHistory && !isStreaming) {
+      inputRef.current?.focus()
+    }
+  }, [isLoadingHistory, isStreaming, id])
+
   // ─── Send message ───────────────────────────────────────────────────────────
 
   const handleSend = useCallback(() => {
