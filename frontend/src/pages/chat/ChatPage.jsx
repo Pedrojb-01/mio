@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sessionsApi } from '../../api/sessions.js'
 import { streamMessage } from '../../api/messages.js'
@@ -48,13 +49,29 @@ function MessageBubble({ role, content }) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div className={`
-        max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden
+        max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed break-words overflow-hidden
         ${isUser
           ? 'bg-accent text-white rounded-br-sm'
           : 'bg-white border border-border text-primary rounded-bl-sm'
         }
       `}>
-        {content}
+        {isUser ? (
+          <span className="whitespace-pre-wrap">{content}</span>
+        ) : (
+          <ReactMarkdown
+            components={{
+              p:      ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+              strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+              em:     ({ children }) => <em className="italic">{children}</em>,
+              ul:     ({ children }) => <ul className="list-disc pl-4 mb-2 flex flex-col gap-1">{children}</ul>,
+              ol: ({ children, start }) => <ol start={start} className="list-decimal pl-4 mb-2 flex flex-col gap-1">{children}</ol>,
+              li:     ({ children }) => <li>{children}</li>,
+              code:   ({ children }) => <code className="bg-surface px-1 py-0.5 rounded text-xs font-mono">{children}</code>,
+            }}
+          >
+            {content}
+          </ReactMarkdown>
+        )}
       </div>
     </div>
   )
