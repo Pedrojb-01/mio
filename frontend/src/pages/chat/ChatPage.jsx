@@ -101,7 +101,25 @@ export default function ChatPage() {
       try {
         const data = await sessionsApi.get(id)
         setSession(data.session)
-        setMessages(data.messages)  // ← já vem junto
+        setMessages(data.messages)
+
+        if (data.session.isStreaming) {
+          setIsStreaming(true)
+
+          const poll = setInterval(async () => {
+            try {
+              const updated = await sessionsApi.get(id)
+              if (!updated.session.isStreaming) {
+                setSession(updated.session)
+                setMessages(updated.messages)
+                setIsStreaming(false)
+                clearInterval(poll)
+              }
+            } catch {
+              clearInterval(poll)
+            }
+          }, 2000)
+        }
       } catch {
         setError('Failed to load chat. Please go back and try again.')
       } finally {
