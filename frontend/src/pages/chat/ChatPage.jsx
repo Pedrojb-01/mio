@@ -47,7 +47,7 @@ function MessageBubble({ role, content }) {
   const isUser = role === 'user'
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start ml-4'}`}>
       <div className={`
         max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed break-words overflow-hidden
         ${isUser
@@ -89,7 +89,9 @@ export default function ChatPage() {
   const [isStreaming, setIsStreaming] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(true)
   const [error, setError]         = useState(null)
+  const [showScrollButton, setShowScrollButton] = useState(false)
 
+  const messagesContainerRef = useRef(null)
   const bottomRef  = useRef(null)
   const inputRef   = useRef(null)
   const MAX_LENGTH = 2000
@@ -149,6 +151,20 @@ export default function ChatPage() {
       inputRef.current?.focus()
     }
   }, [isLoadingHistory, isStreaming, id])
+
+  // Show scroll to bottom button when user scrolls up
+useEffect(() => {
+  const container = messagesContainerRef.current
+  if (!container) return
+
+  function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = container
+    setShowScrollButton(scrollHeight - scrollTop - clientHeight > 100)
+  }
+
+  container.addEventListener('scroll', handleScroll)
+  return () => container.removeEventListener('scroll', handleScroll)
+}, [])
 
   // ─── Send message ───────────────────────────────────────────────────────────
 
@@ -225,7 +241,7 @@ export default function ChatPage() {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col h-screen">
+      <div className="relative flex flex-col h-screen">
 
         {/* Header */}
         <header className="shrink-0 flex items-center gap-3 px-6 py-4
@@ -250,7 +266,7 @@ export default function ChatPage() {
         </header>
 
         {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
           <div className="max-w-2xl mx-auto flex flex-col gap-4">
 
             {/* Loading history */}
@@ -297,15 +313,35 @@ export default function ChatPage() {
                 role={message.role}
                 content={message.content}
               />
-            ))}
+            ))} 
 
             {/* Scroll anchor */}
             <div ref={bottomRef} />
           </div>
         </div>
 
+        {/* Scroll to bottom button */}
+        {showScrollButton && (
+          <div className="absolute bottom-39 right-0 left-0 flex justify-center z-10 pointer-events-none">
+            <button
+              onClick={() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              aria-label="Scroll to bottom"
+              className="h-9 w-9 flex items-center justify-center bg-white border border-border
+                rounded-full shadow-md text-muted hover:text-primary
+                transition-colors duration-150 pointer-events-auto cursor-pointer"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                strokeLinejoin="round" aria-hidden="true">
+                <line x1="12" y1="4" x2="12" y2="20" />
+                <polyline points="6 14 12 20 18 14" />
+              </svg>
+            </button>
+          </div>
+        )}
+
         {/* Input area */}
-        <div className="shrink-0 px-6 py-4">
+        <div className="shrink-0 px-6 pb-4 pt-0">
           <div className="max-w-2xl mx-auto">
 
             {/* Streaming error */}
