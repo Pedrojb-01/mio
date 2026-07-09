@@ -54,3 +54,22 @@ textarea::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted);
   background-clip: padding-box;
 }
+
+/* Custom scrollbar for main content */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+  min-height: 40px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
