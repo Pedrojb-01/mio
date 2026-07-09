@@ -43,19 +43,26 @@ function IconSpinner() {
 
 // ─── Message bubble ───────────────────────────────────────────────────────────
 
-function MessageBubble({ role, content }) {
+function MessageBubble({ role, content, isStreaming }) {
   const isUser = role === 'user'
+  const isTyping = !isUser && isStreaming && content === ''
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start ml-4'}`}>
       <div className={`
-        max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed break-words overflow-hidden
+        max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden
         ${isUser
           ? 'bg-accent text-white rounded-br-sm'
           : 'bg-white border border-border text-primary rounded-bl-sm'
         }
       `}>
-        {isUser ? (
+        {isTyping ? (
+          <div className="flex items-center gap-1 h-4">
+            <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:0ms]" />
+            <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:150ms]" />
+            <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:300ms]" />
+          </div>
+        ) : isUser ? (
           <span className="whitespace-pre-wrap">{content}</span>
         ) : (
           <ReactMarkdown
@@ -64,7 +71,7 @@ function MessageBubble({ role, content }) {
               strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
               em:     ({ children }) => <em className="italic">{children}</em>,
               ul:     ({ children }) => <ul className="list-disc pl-4 mb-2 flex flex-col gap-1">{children}</ul>,
-              ol: ({ children, start }) => <ol start={start} className="list-decimal pl-4 mb-2 flex flex-col gap-1">{children}</ol>,
+              ol:     ({ children, start }) => <ol start={start} className="list-decimal pl-4 mb-2 flex flex-col gap-1">{children}</ol>,
               li:     ({ children }) => <li>{children}</li>,
               code:   ({ children }) => <code className="bg-surface px-1 py-0.5 rounded text-xs font-mono">{children}</code>,
             }}
@@ -312,8 +319,9 @@ useEffect(() => {
                 key={message.id ?? index}
                 role={message.role}
                 content={message.content}
+                isStreaming={isStreaming}
               />
-            ))} 
+            ))}
 
             {/* Scroll anchor */}
             <div ref={bottomRef} />
