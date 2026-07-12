@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -86,7 +87,61 @@ const CHAT_PREVIEW = [
 
 // ─── Components ──────────────────────────────────────────────────────────────
 
+const TYPING_SPEED    = 50   // ms per character
+const PAUSE_AFTER_USER = 800  // ms before AI starts typing
+const PAUSE_DOTS       = 1200 // ms showing typing dots
+
 function ChatPreview() {
+  const [phase, setPhase]         = useState('idle')    // idle | user | dots | ai | done
+  const [userText, setUserText]   = useState('')
+  const [aiText, setAiText]       = useState('')
+
+  const fullUser = CHAT_PREVIEW[0].content
+  const fullAi   = CHAT_PREVIEW[1].content
+
+  useEffect(() => {
+    let timeout
+    let interval
+    let index = 0
+
+    // Phase 1: type user message
+    setPhase('user')
+    setUserText('')
+    setAiText('')
+
+    interval = setInterval(() => {
+      index++
+      setUserText(fullUser.slice(0, index))
+      if (index >= fullUser.length) {
+        clearInterval(interval)
+
+        // Phase 2: show dots
+        timeout = setTimeout(() => {
+          setPhase('dots')
+
+          // Phase 3: type AI response
+          timeout = setTimeout(() => {
+            setPhase('ai')
+            index = 0
+            interval = setInterval(() => {
+              index++
+              setAiText(fullAi.slice(0, index))
+              if (index >= fullAi.length) {
+                clearInterval(interval)
+                setPhase('done')
+              }
+            }, TYPING_SPEED)
+          }, PAUSE_DOTS)
+        }, PAUSE_AFTER_USER)
+      }
+    }, TYPING_SPEED)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [])
+
   return (
     <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
 
@@ -103,31 +158,47 @@ function ChatPreview() {
       </div>
 
       {/* Messages */}
-      <div className="flex flex-col gap-4 p-5">
-        {CHAT_PREVIEW.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`
-              max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap
-              ${msg.role === 'user'
-                ? 'bg-accent text-white rounded-br-sm'
-                : 'bg-surface border border-border text-primary rounded-bl-sm'
-              }
-            `}>
-              {msg.content}
-            </div>
-          </div>
-        ))}
+      <div className="flex flex-col gap-4 p-5 min-h-[280px]">
 
-        {/* Fake typing indicator */}
-        <div className="flex justify-start">
-          <div className="bg-surface border border-border rounded-2xl rounded-bl-sm px-4 py-3">
-            <div className="flex gap-1 items-center h-4">
-              <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:0ms]" />
-              <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:150ms]" />
-              <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:300ms]" />
+        {/* User message */}
+        {userText && (
+          <div className="flex justify-end">
+            <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-br-sm
+              text-sm leading-relaxed bg-accent text-white whitespace-pre-wrap">
+              {userText}
+              {phase === 'user' && (
+                <span className="inline-block w-0.5 h-3.5 bg-white/70 ml-0.5 animate-pulse" />
+              )}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Typing dots */}
+        {phase === 'dots' && (
+          <div className="flex justify-start">
+            <div className="bg-surface border border-border rounded-2xl rounded-bl-sm px-4 py-3">
+              <div className="flex gap-1 items-center h-4">
+                <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:0ms]" />
+                <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:150ms]" />
+                <div className="h-1.5 w-1.5 rounded-full bg-muted animate-bounce [animation-delay:300ms]" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* AI message */}
+        {aiText && (
+          <div className="flex justify-start">
+            <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-bl-sm
+              text-sm leading-relaxed bg-surface border border-border text-primary whitespace-pre-wrap">
+              {aiText}
+              {phase === 'ai' && (
+                <span className="inline-block w-0.5 h-3.5 bg-primary/50 ml-0.5 animate-pulse" />
+              )}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )
@@ -143,7 +214,10 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-sm
         border-b border-border">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="text-lg font-semibold tracking-tight text-primary">mio</span>
+          <div className="flex items-center gap-2">
+            <img src="/favicon.svg" alt="Mio" className="h-7 w-7 rounded-lg" />
+            <span className="text-lg font-semibold tracking-tight text-primary">mio</span>
+          </div>
           <div className="flex items-center gap-3">
             <Link
               to="/login"
@@ -283,7 +357,10 @@ export default function LandingPage() {
       {/* ── Footer ── */}
       <footer className="border-t border-border py-6">
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-between">
-          <span className="text-sm font-medium text-primary">mio</span>
+          <div className="flex items-center gap-2">
+            <img src="/favicon.svg" alt="Mio" className="h-6 w-6 rounded-lg" />
+            <span className="text-sm font-medium text-primary">mio</span>
+          </div>
           <p className="text-xs text-muted">
             Built for the IBM SkillsBuild AI Builders Challenge · 2026
           </p>
