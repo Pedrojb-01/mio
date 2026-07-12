@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext.jsx'
 import { sessionsApi } from '../../api/sessions.js'
 
@@ -146,6 +146,10 @@ function UserMenu({ user }) {
 export default function Sidebar() {
   const { user }               = useAuth()
   const [sessions, setSessions] = useState([])
+  const location               = useLocation()
+  const activeChatId           = location.pathname.startsWith('/chat/')
+    ? location.pathname.split('/chat/')[1]
+    : null
 
   // Fetch recent sessions for the sidebar (last 5)
   useEffect(() => {
@@ -209,8 +213,12 @@ export default function Sidebar() {
               <Link
                 key={session.id}
                 to={`/chat/${session.id}`}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted
-                  hover:text-primary hover:bg-surface transition-colors duration-150 truncate"
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                  transition-colors duration-150 truncate
+                  ${activeChatId === session.id
+                    ? 'bg-soft text-accent font-medium'
+                    : 'text-muted hover:text-primary hover:bg-surface'
+                  }`}
               >
                 <IconSession />
                 <span className="truncate">{session.title ?? 'Untitled session'}</span>
