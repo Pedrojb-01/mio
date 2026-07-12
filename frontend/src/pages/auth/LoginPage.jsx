@@ -67,83 +67,84 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-surface flex flex-col">
 
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <span className="text-2xl font-semibold tracking-tight text-primary">
-            mio
-          </span>
-          <p className="mt-1 text-sm text-muted">
+      {/* Header */}
+      <header className="px-8 py-5 border-b border-border bg-white">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-150"
+        >
+          <img src="/favicon.svg" alt="Mio" className="h-8 w-8 rounded-xl" />
+          <span className="text-lg font-semibold tracking-tight text-primary">mio</span>
+        </Link>
+      </header>
+
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center px-4">
+        <div className="w-full max-w-sm">
+
+          <p className="mb-6 text-center text-sm text-muted">
             Sign in to your account
           </p>
+
+          {/* Card */}
+          <div className="bg-white border border-border rounded-2xl p-8 shadow-sm">
+            {serverError && (
+              <div role="alert" className="mb-5 px-4 py-3 rounded-lg bg-red-50
+                border border-red-200 text-sm text-red-600">
+                {serverError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+              <Input
+                id="email"
+                label="Email"
+                type="email"
+                value={fields.email}
+                onChange={handleChange}
+                error={errors.email}
+                placeholder="you@example.com"
+                autoComplete="email"
+                maxLength={254}
+                required
+              />
+              <Input
+                id="password"
+                label="Password"
+                type="password"
+                value={fields.password}
+                onChange={handleChange}
+                error={errors.password}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                maxLength={128}
+                required
+              />
+              <Button
+                type="submit"
+                isLoading={isLoading}
+                disabled={isLoading}
+                fullWidth
+                size="md"
+              >
+                Sign in
+              </Button>
+            </form>
+          </div>
+
+          {/* Footer link */}
+          <p className="mt-5 text-center text-sm text-muted">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-accent font-medium hover:underline">
+              Create one
+            </Link>
+          </p>
+
         </div>
-
-        {/* Card */}
-        <div className="bg-white border border-border rounded-2xl p-8 shadow-sm">
-
-          {/* Server error */}
-          {serverError && (
-            <div
-              role="alert"
-              className="mb-5 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600"
-            >
-              {serverError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-            <Input
-              id="email"
-              label="Email"
-              type="email"
-              value={fields.email}
-              onChange={handleChange}
-              error={errors.email}
-              placeholder="you@example.com"
-              autoComplete="email"
-              maxLength={254}
-              required
-            />
-
-            <Input
-              id="password"
-              label="Password"
-              type="password"
-              value={fields.password}
-              onChange={handleChange}
-              error={errors.password}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              maxLength={128}
-              required
-            />
-
-            <Button
-              type="submit"
-              isLoading={isLoading}
-              disabled={isLoading}
-              fullWidth
-              size="md"
-            >
-              Sign in
-            </Button>
-          </form>
-        </div>
-
-        {/* Footer link */}
-        <p className="mt-5 text-center text-sm text-muted">
-          Don't have an account?{' '}
-          <Link
-            to="/register"
-            className="text-accent font-medium hover:underline"
-          >
-            Create one
-          </Link>
-        </p>
-
       </div>
+
     </div>
   )
 }

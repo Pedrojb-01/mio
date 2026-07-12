@@ -74,109 +74,111 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-surface flex flex-col">
 
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <span className="text-2xl font-semibold tracking-tight text-primary">
-            mio
-          </span>
-          <p className="mt-1 text-sm text-muted">
+      {/* Header */}
+      <header className="px-8 py-5 border-b border-border bg-white">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-150"
+        >
+          <img src="/favicon.svg" alt="Mio" className="h-8 w-8 rounded-xl" />
+          <span className="text-lg font-semibold tracking-tight text-primary">mio</span>
+        </Link>
+      </header>
+
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center px-4">
+        <div className="w-full max-w-sm">
+
+          <p className="mb-6 text-center text-sm text-muted">
             Create your account
           </p>
+
+          {/* Card */}
+          <div className="bg-white border border-border rounded-2xl p-8 shadow-sm">
+            {serverError && (
+              <div
+                role="alert"
+                className="mb-5 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600"
+              >
+                {serverError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+              <Input
+                id="name"
+                label="Name"
+                type="text"
+                value={fields.name}
+                onChange={handleChange}
+                error={errors.name}
+                placeholder="Your name"
+                autoComplete="name"
+                maxLength={64}
+                required
+              />
+              <Input
+                id="email"
+                label="Email"
+                type="email"
+                value={fields.email}
+                onChange={handleChange}
+                error={errors.email}
+                placeholder="you@example.com"
+                autoComplete="email"
+                maxLength={254}
+                required
+              />
+              <Input
+                id="password"
+                label="Password"
+                type="password"
+                value={fields.password}
+                onChange={handleChange}
+                error={errors.password}
+                placeholder="••••••••"
+                autoComplete="new-password"
+                maxLength={128}
+                hint="At least 8 characters"
+                required
+              />
+              <Input
+                id="confirmPassword"
+                label="Confirm password"
+                type="password"
+                value={fields.confirmPassword}
+                onChange={handleChange}
+                error={errors.confirmPassword}
+                placeholder="••••••••"
+                autoComplete="new-password"
+                maxLength={128}
+                required
+              />
+              <Button
+                type="submit"
+                isLoading={isLoading}
+                disabled={isLoading}
+                fullWidth
+                size="md"
+              >
+                Create account
+              </Button>
+            </form>
+          </div>
+
+          {/* Footer link */}
+          <p className="mt-5 text-center text-sm text-muted">
+            Already have an account?{' '}
+            <Link to="/login" className="text-accent font-medium hover:underline">
+              Sign in
+            </Link>
+          </p>
+
         </div>
-
-        {/* Card */}
-        <div className="bg-white border border-border rounded-2xl p-8 shadow-sm">
-
-          {serverError && (
-            <div
-              role="alert"
-              className="mb-5 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600"
-            >
-              {serverError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-            <Input
-              id="name"
-              label="Name"
-              type="text"
-              value={fields.name}
-              onChange={handleChange}
-              error={errors.name}
-              placeholder="Your name"
-              autoComplete="name"
-              maxLength={64}
-              required
-            />
-
-            <Input
-              id="email"
-              label="Email"
-              type="email"
-              value={fields.email}
-              onChange={handleChange}
-              error={errors.email}
-              placeholder="you@example.com"
-              autoComplete="email"
-              maxLength={254}
-              required
-            />
-
-            <Input
-              id="password"
-              label="Password"
-              type="password"
-              value={fields.password}
-              onChange={handleChange}
-              error={errors.password}
-              placeholder="••••••••"
-              autoComplete="new-password"
-              maxLength={128}
-              hint="At least 8 characters"
-              required
-            />
-
-            <Input
-              id="confirmPassword"
-              label="Confirm password"
-              type="password"
-              value={fields.confirmPassword}
-              onChange={handleChange}
-              error={errors.confirmPassword}
-              placeholder="••••••••"
-              autoComplete="new-password"
-              maxLength={128}
-              required
-            />
-
-            <Button
-              type="submit"
-              isLoading={isLoading}
-              disabled={isLoading}
-              fullWidth
-              size="md"
-            >
-              Create account
-            </Button>
-          </form>
-        </div>
-
-        {/* Footer link */}
-        <p className="mt-5 text-center text-sm text-muted">
-          Already have an account?{' '}
-          <Link
-            to="/login"
-            className="text-accent font-medium hover:underline"
-          >
-            Sign in
-          </Link>
-        </p>
-
       </div>
+
     </div>
   )
 }
