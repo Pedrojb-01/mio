@@ -214,6 +214,7 @@ useEffect(() => {
       onDone: () => {
         setIsStreaming(false)
         inputRef.current?.focus()
+        window.dispatchEvent(new CustomEvent('session-updated'))
       },
       onError: (message) => {
         // Remove the empty assistant placeholder on error
