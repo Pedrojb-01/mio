@@ -143,7 +143,7 @@ function ChatPreview() {
   }, [])
 
   return (
-    <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
 
       {/* Fake header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
@@ -167,7 +167,7 @@ function ChatPreview() {
               text-sm leading-relaxed bg-accent text-white whitespace-pre-wrap">
               {userText}
               {phase === 'user' && (
-                <span className="inline-block w-0.5 h-3.5 bg-white/70 ml-0.5 animate-pulse" />
+                <span className="inline-block w-0.5 h-3.5 bg-surface/70 ml-0.5 animate-pulse" />
               )}
             </div>
           </div>
@@ -286,7 +286,7 @@ export default function LandingPage() {
               <Link
                 to="/login"
                 className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm
-                  font-medium border border-border text-primary bg-white
+                  font-medium border border-border text-primary bg-surface
                   hover:bg-surface transition-colors duration-150"
               >
                 Sign in
@@ -302,7 +302,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="bg-white border-y border-border py-16">
+      <section className="bg-surface border-y border-border py-16">
         <div className="max-w-5xl mx-auto px-6">
 
           <div className="text-center mb-12">

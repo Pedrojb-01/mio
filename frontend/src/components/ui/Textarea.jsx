@@ -42,7 +42,7 @@ export default function Textarea({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
         className={`
-          w-full px-3.5 py-2.5 rounded-lg text-sm text-primary bg-white
+          w-full px-3.5 py-2.5 rounded-lg text-sm text-primary bg-surface
           border transition-colors duration-150 resize-none
           placeholder:text-muted
           focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent

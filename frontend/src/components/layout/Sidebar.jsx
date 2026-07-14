@@ -105,7 +105,7 @@ function UserMenu({ user }) {
       {open && (
         <div
           role="menu"
-          className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-border
+          className="absolute bottom-full left-0 right-0 mb-1 bg-surface border border-border
             rounded-xl shadow-lg py-1 z-50"
         >
           <Link
@@ -183,7 +183,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-60 shrink-0 h-screen sticky top-0 flex flex-col
-      border-r border-border bg-white px-3 py-4">
+      border-r border-border bg-surface px-3 py-4">
 
       {/* Logo */}
       <div className="px-3 mb-6">

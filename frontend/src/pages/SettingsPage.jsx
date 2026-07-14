@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import DashboardLayout from '../components/layout/DashboardLayout.jsx'
+import { useTheme } from '../contexts/ThemeContext.jsx'
 
 function Section({ title, description, children }) {
   return (
-    <div className="bg-white border border-border rounded-2xl overflow-hidden">
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden">
       <div className="px-6 py-5 border-b border-border">
         <h2 className="text-sm font-semibold text-primary">{title}</h2>
         {description && (
@@ -52,7 +53,7 @@ function Toggle({ enabled, onChange, label }) {
       `}
     >
       <span className={`
-        inline-block h-3.5 w-3.5 rounded-full bg-white shadow
+        inline-block h-3.5 w-3.5 rounded-full bg-surface shadow
         transition-transform duration-200
         ${enabled ? 'translate-x-[18px]' : 'translate-x-[3px]'}
       `} />
@@ -65,7 +66,7 @@ export default function SettingsPage() {
   const { user }      = useAuth()
 
   // UI-only for now — dark mode wiring comes later
-  const [darkMode, setDarkMode] = useState(false)
+  const { isDark, setIsDark } = useTheme()
   const [emailNotifications, setEmailNotifications] = useState(true)
 
   return (
@@ -122,8 +123,8 @@ export default function SettingsPage() {
               description="Switch to a darker color scheme."
             >
               <Toggle
-                enabled={darkMode}
-                onChange={setDarkMode}
+                enabled={isDark}
+                onChange={setIsDark}
                 label="Toggle dark mode"
               />
             </SettingRow>

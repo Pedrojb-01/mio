@@ -182,7 +182,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-border rounded-2xl p-8 shadow-sm">
+        <div className="bg-surface border border-border rounded-2xl p-8 shadow-sm">
 
           {serverError && (
             <div
@@ -297,7 +297,7 @@ export default function OnboardingPage() {
                       transition-colors duration-150 cursor-pointer
                       ${fields.voiceTone === tone.value
                         ? 'border-accent bg-soft'
-                        : 'border-border bg-white hover:bg-surface'
+                        : 'border-border bg-surface hover:bg-surface'
                       }
                     `}
                   >

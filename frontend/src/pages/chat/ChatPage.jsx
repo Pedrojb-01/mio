@@ -53,7 +53,7 @@ function MessageBubble({ role, content, isStreaming }) {
         max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden
         ${isUser
           ? 'bg-accent text-white rounded-br-sm'
-          : 'bg-white border border-border text-primary rounded-bl-sm'
+          : 'bg-surface border border-border text-primary rounded-bl-sm'
         }
       `}>
         {isTyping ? (
@@ -253,7 +253,7 @@ useEffect(() => {
 
         {/* Header */}
         <header className="shrink-0 flex items-center gap-3 px-6 py-4
-          border-b border-border bg-white">
+          border-b border-border bg-surface">
           <button
             onClick={handleBack}
             aria-label="Go back"
@@ -335,7 +335,7 @@ useEffect(() => {
             <button
               onClick={() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })}
               aria-label="Scroll to bottom"
-              className="h-9 w-9 flex items-center justify-center bg-white border border-border
+              className="h-9 w-9 flex items-center justify-center bg-surface border border-border
                 rounded-full shadow-md text-muted hover:text-primary
                 transition-colors duration-150 pointer-events-auto cursor-pointer"
             >

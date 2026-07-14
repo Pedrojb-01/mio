@@ -85,7 +85,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
   return (
     <div
       onClick={() => !renaming && !menuOpen && navigate(`/chat/${session.id}`)}
-      className="group relative bg-white border border-border rounded-xl p-5
+      className="group relative bg-surface border border-border rounded-xl p-5
         hover:border-accent/40 hover:shadow-sm transition-all duration-150 cursor-pointer"
     >
       {/* Mode badge */}
@@ -137,7 +137,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
         {menuOpen && (
           <div
             role="menu"
-            className="absolute right-0 top-full mt-1 w-36 bg-white border border-border
+            className="absolute right-0 top-full mt-1 w-36 bg-surface border border-border
               rounded-xl shadow-lg py-1 z-10"
           >
             <button

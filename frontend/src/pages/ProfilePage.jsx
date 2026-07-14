@@ -25,7 +25,7 @@ const VOICE_TONES = [
 
 function Section({ title, description, children }) {
   return (
-    <div className="bg-white border border-border rounded-2xl overflow-hidden">
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden">
       <div className="px-6 py-5 border-b border-border">
         <h2 className="text-sm font-semibold text-primary">{title}</h2>
         {description && (
@@ -289,7 +289,7 @@ export default function ProfilePage() {
                     transition-colors duration-150
                     ${fields.voiceTone === tone.value
                       ? 'border-accent bg-soft'
-                      : 'border-border bg-white hover:bg-surface'
+                      : 'border-border bg-surface hover:bg-surface'
                     }
                   `}
                 >

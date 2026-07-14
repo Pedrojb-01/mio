@@ -77,7 +77,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-surface flex flex-col">
 
       {/* Header */}
-      <header className="px-8 py-5 border-b border-border bg-white">
+      <header className="px-8 py-5 border-b border-border bg-surface">
         <Link
           to="/"
           className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-150"
@@ -96,7 +96,7 @@ export default function RegisterPage() {
           </p>
 
           {/* Card */}
-          <div className="bg-white border border-border rounded-2xl p-8 shadow-sm">
+          <div className="bg-surface border border-border rounded-2xl p-8 shadow-sm">
             {serverError && (
               <div
                 role="alert"

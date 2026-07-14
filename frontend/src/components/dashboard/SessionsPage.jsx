@@ -115,7 +115,7 @@ export default function SessionsPage({ mode, title }) {
         {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-white border border-border rounded-xl
+              <div key={i} className="h-32 bg-surface border border-border rounded-xl
                 animate-pulse" />
             ))}
           </div>
