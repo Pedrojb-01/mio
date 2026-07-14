@@ -12,6 +12,7 @@ import CreatePage      from './pages/dashboard/CreatePage.jsx'
 import ChatPage        from './pages/chat/ChatPage.jsx'
 import ProfilePage     from './pages/ProfilePage.jsx'
 import SettingsPage    from './pages/SettingsPage.jsx'
+import AdminUsersPage  from './pages/admin/AdminUsersPage.jsx'
 
 // ─── Route Guards ────────────────────────────────────────────────────────────
 
@@ -46,6 +47,21 @@ function OnboardingRoute({ children }) {
   return children
 }
 
+// Admin route: only for authenticated users with role 'admin'
+// If not logged in → /login
+// If logged in but no onboarding → /onboarding
+// If logged in + onboarding but not admin → /dashboard/brainstorm
+function AdminRoute({ children }) {
+  const { isAuthenticated, profile, user, isLoading } = useAuth()
+  if (isLoading) return null
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!profile?.onboardingComplete) return <Navigate to="/onboarding" replace />
+  if (user?.role !== 'admin') return <Navigate to="/dashboard/brainstorm" replace />
+  return children
+}
+
+// ─── Routes ──────────────────────────────────────────
+
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
 function AppRoutes() {
@@ -65,6 +81,9 @@ function AppRoutes() {
       <Route path="/chat/:id"             element={<PrivateRoute><ChatPage /></PrivateRoute>} />
       <Route path="/profile"              element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
       <Route path="/settings"             element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
+
+      {/* Admin */}
+      <Route path="/admin" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
 
       {/* Fallback: any unknown URL → landing */}
       <Route path="*" element={<Navigate to="/" replace />} />

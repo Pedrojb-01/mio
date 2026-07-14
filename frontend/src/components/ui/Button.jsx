@@ -17,7 +17,7 @@ export default function Button({
 
   const variants = {
     primary:   'bg-accent text-white hover:bg-accent-hover',
-    secondary: 'border border-border text-primary bg-white hover:bg-surface',
+    secondary: 'border border-border text-primary bg-surface hover:brightness-110',
     ghost:     'text-muted hover:text-primary hover:bg-surface',
   }
 

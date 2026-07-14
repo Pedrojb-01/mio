@@ -126,6 +126,20 @@ function UserMenu({ user }) {
           >
             Settings
           </Link>
+          {user.role === 'admin' && (
+            <>
+              <div className="my-1 border-t border-border" />
+              <Link
+                to="/admin"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-accent
+                  hover:bg-soft transition-colors duration-150"
+              >
+                Admin
+              </Link>
+            </>
+          )}
           <div className="my-1 border-t border-border" />
           <button
             role="menuitem"

@@ -26,7 +26,7 @@ async function getProfileWithUser(userId) {
   const [user, profile] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true }
+      select: { id: true, name: true, email: true, role: true }
     }),
     prisma.profile.findUnique({
       where: { userId }
@@ -37,6 +37,7 @@ async function getProfileWithUser(userId) {
     id:      user.id,
     name:    user.name,
     email:   user.email,
+    role:    user.role,
     profile: profile ?? null,
   };
 }

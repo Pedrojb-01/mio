@@ -23,6 +23,9 @@ async function request(method, path, body = null) {
     const error = await response.json().catch(() => ({
       message: 'Unexpected error. Please try again.',
     }))
+    if (response.status === 401) {
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'))
+    }
     throw new AppError(error.message, response.status)
   }
 
