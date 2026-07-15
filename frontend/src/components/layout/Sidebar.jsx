@@ -201,7 +201,10 @@ export default function Sidebar() {
 
       {/* Logo */}
       <div className="px-3 mb-6">
-        <span className="text-xl font-semibold tracking-tight text-primary">mio</span>
+        <div className="flex items-center gap-2">
+          <img src="/favicon.svg" alt="Mio" className="h-7 w-7 rounded-lg" />
+          <span className="text-xl font-semibold tracking-tight text-primary">mio</span>
+        </div>
       </div>
 
       {/* Main nav */}
