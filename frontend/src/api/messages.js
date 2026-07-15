@@ -15,6 +15,10 @@ export function streamMessage({ sessionId, content, onChunk, onTitle, onDone, on
   })
     .then(async response => {
       if (!response.ok) {
+        if (response.status === 401) {
+          window.dispatchEvent(new CustomEvent('auth:unauthorized'))
+          return
+        }
         const err = await response.json().catch(() => ({ message: 'Unexpected error.' }))
         onError(err.message)
         return

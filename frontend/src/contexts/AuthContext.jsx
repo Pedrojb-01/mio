@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client.js'
+import { restoreSession } from '../api/profile.js'
 
 const AuthContext = createContext(null)
 
@@ -28,11 +29,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function restore() {
       try {
-        const data = await api.get('/profile')
-        setUser({ id: data.id, name: data.name, email: data.email, role: data.role })
-        setProfile(data.profile)
-      } catch {
-        // 401 = cookie expired or missing, user stays null
+        const data = await restoreSession()
+        if (data) {
+          setUser({ id: data.id, name: data.name, email: data.email, role: data.role })
+          setProfile(data.profile)
+        }
       } finally {
         setIsLoading(false)
       }
