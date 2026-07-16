@@ -42,12 +42,16 @@ function ConfirmModal({ title, onConfirm, onCancel, isLoading }) {
   }, [onCancel])
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={onCancel}
-    >
-      {/* Backdrop with blur */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop with blur — intercepts all clicks */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onMouseDown={e => {
+          e.preventDefault()
+          e.stopPropagation()
+          onCancel()
+        }}
+      />
 
       {/* Modal */}
       <div
