@@ -67,6 +67,10 @@ export function AuthProvider({ children }) {
     setProfile(prev => ({ ...prev, ...updates }))
   }
 
+  function updateUser(updates) {
+    setUser(prev => ({ ...prev, ...updates }))
+  }
+
   const value = {
     user,
     profile,
@@ -76,6 +80,7 @@ export function AuthProvider({ children }) {
     register,
     logout,
     updateProfile,
+    updateUser,
   }
 
   return (

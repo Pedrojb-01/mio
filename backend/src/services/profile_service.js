@@ -2,9 +2,7 @@ const prisma = require('../utils/prisma');
 const AppError = require('../utils/app_error');
 
 // Update user's profile
-async function updateProfile(userId, data) {
-
-  // Check if profile exists
+async function updateProfile(userId, { name, ...profileData }) {
   const existingProfile = await prisma.profile.findUnique({
     where: { userId }
   });
@@ -13,10 +11,15 @@ async function updateProfile(userId, data) {
     throw new AppError('Profile not found', 404);
   }
 
-  const updatedProfile = await prisma.profile.update({
-    where: { userId },
-    data
-  });
+  const [updatedProfile] = await Promise.all([
+    prisma.profile.update({
+      where: { userId },
+      data: profileData
+    }),
+    name !== undefined
+      ? prisma.user.update({ where: { id: userId }, data: { name } })
+      : Promise.resolve()
+  ]);
 
   return updatedProfile;
 }

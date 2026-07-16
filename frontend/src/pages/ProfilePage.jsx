@@ -40,7 +40,7 @@ function Section({ title, description, children }) {
 }
 
 export default function ProfilePage() {
-  const { user, profile, updateProfile } = useAuth()
+  const { user, profile, updateProfile, updateUser } = useAuth()
   const navigate = useNavigate()
 
   const [fields, setFields] = useState({
@@ -133,6 +133,7 @@ export default function ProfilePage() {
 
       const data = await profileApi.update(body)
       updateProfile(data.profile)
+      if (data.name) updateUser({ name: data.name })
       setToast({ message: 'Profile updated successfully.', type: 'success' })
     } catch (error) {
       if (error.isAppError) {

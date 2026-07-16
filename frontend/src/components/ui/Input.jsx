@@ -43,15 +43,19 @@ export default function Input({
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label
-          htmlFor={id}
-          className="text-sm font-medium text-primary"
-        >
-          {label}
-          {required && (
-            <span className="text-accent ml-1" aria-hidden="true">*</span>
+        <div className="flex items-center justify-between">
+          <label htmlFor={id} className="text-sm font-medium text-primary">
+            {label}
+            {required && (
+              <span className="text-accent ml-1" aria-hidden="true">*</span>
+            )}
+          </label>
+          {maxLength && value?.length >= maxLength && (
+            <span className="text-xs text-red-500">
+              {value.length}/{maxLength}
+            </span>
           )}
-        </label>
+        </div>
       )}
 
     <div className="relative">

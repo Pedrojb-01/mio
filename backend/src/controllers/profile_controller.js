@@ -6,6 +6,7 @@ async function updateProfileController(req, res) {
   try {
     const userId = req.user.id;
     const {
+      name,
       businessName,
       niche,
       businessDescription,
@@ -17,6 +18,7 @@ async function updateProfileController(req, res) {
 
     // Build update object with only provided fields
     const data = {};
+    if (name !== undefined) data.name = name;
     if (businessName !== undefined) data.businessName = businessName;
     if (niche !== undefined) data.niche = niche;
     if (businessDescription !== undefined) data.businessDescription = businessDescription;
@@ -26,6 +28,9 @@ async function updateProfileController(req, res) {
     if (voiceTone !== undefined) data.voiceTone = voiceTone;
 
     // Validate that required fields are not being emptied
+    if (data.name === '') {
+      return res.status(400).json({ message: 'Name cannot be empty' });
+    }
     if (data.businessName === '') {
       return res.status(400).json({ message: 'Business name cannot be empty' });
     }
@@ -44,7 +49,7 @@ async function updateProfileController(req, res) {
     }
 
     const profile = await updateProfile(userId, data);
-    return res.status(200).json({ message: 'Profile updated successfully', profile });
+    return res.status(200).json({ message: 'Profile updated successfully', profile, name: data.name });
 
   } catch (error) {
     if (error.isAppError) {
