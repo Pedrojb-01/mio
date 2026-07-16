@@ -121,15 +121,29 @@ export default function SessionsPage({ mode, title }) {
               <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
             </svg>
             <input
-              type="search"
+              type="text"
               placeholder="Search sessions…"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm text-primary bg-surface
+              className="w-full pl-9 pr-9 py-2.5 rounded-lg text-sm text-primary bg-surface
                 border border-border placeholder:text-muted
                 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent
                 transition-colors duration-150"
             />
+            {query && (
+              <button
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted
+                  hover:text-primary transition-colors duration-150"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         )}
 
