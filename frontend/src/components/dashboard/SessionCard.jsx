@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { sessionsApi } from '../../api/sessions.js'
 import { sanitizeField } from '../../utils/sanitize.js'
@@ -30,13 +31,70 @@ function getRelativeDate(dateString) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+function ConfirmModal({ title, onConfirm, onCancel, isLoading }) {
+  // Close on Escape
+  useEffect(() => {
+    function handleKey(e) {
+      if (e.key === 'Escape') onCancel()
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onCancel])
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onCancel}
+    >
+      {/* Backdrop with blur */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+
+      {/* Modal */}
+      <div
+        className="relative bg-surface border border-border rounded-2xl shadow-xl
+          p-6 w-full max-w-sm"
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-base font-semibold text-primary mb-1">Delete session?</h2>
+        <p className="text-sm text-muted mb-6">
+          <span className="font-medium text-primary">"{title}"</span> will be permanently deleted.
+        </p>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-primary
+              bg-surface border border-border hover:brightness-110
+              transition-colors duration-150 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white
+              bg-red-500 hover:bg-red-600 transition-colors duration-150
+              disabled:opacity-50"
+          >
+            {isLoading ? 'Deleting…' : 'Delete'}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 export default function SessionCard({ session, onDelete, onRename }) {
-  const navigate               = useNavigate()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [renaming, setRenaming] = useState(false)
-  const [title, setTitle]       = useState(session.title ?? 'Untitled session')
-  const menuRef                 = useRef(null)
-  const inputRef                = useRef(null)
+  const navigate                      = useNavigate()
+  const [menuOpen, setMenuOpen]       = useState(false)
+  const [renaming, setRenaming]       = useState(false)
+  const [confirming, setConfirming]   = useState(false)
+  const [isDeleting, setIsDeleting]   = useState(false)
+  const [title, setTitle]             = useState(session.title ?? 'Untitled session')
+  const menuRef                       = useRef(null)
+  const inputRef                      = useRef(null)
 
   // Close menu on outside click
   useEffect(() => {
@@ -71,13 +129,22 @@ export default function SessionCard({ session, onDelete, onRename }) {
     if (e.key === 'Escape') { setTitle(session.title ?? 'Untitled session'); setRenaming(false) }
   }
 
-  async function handleDelete() {
+  function handleDeleteClick() {
     setMenuOpen(false)
+    setConfirming(true)
+  }
+
+  async function handleDeleteConfirm() {
+    setIsDeleting(true)
     try {
       await sessionsApi.remove(session.id)
       onDelete(session.id)
       window.dispatchEvent(new CustomEvent('session-updated'))
-    } catch { /* silent — card stays */ }
+    } catch {
+      setConfirming(false)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const date = getRelativeDate(session.lastInteraction)
@@ -150,7 +217,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
             </button>
             <button
               role="menuitem"
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               className="w-full px-4 py-2 text-sm text-left text-red-500
                 hover:bg-red-50 transition-colors duration-150"
             >
@@ -159,6 +226,14 @@ export default function SessionCard({ session, onDelete, onRename }) {
           </div>
         )}
       </div>
+    {confirming && (
+        <ConfirmModal
+          title={title}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setConfirming(false)}
+          isLoading={isDeleting}
+        />
+      )}
     </div>
   )
 }
