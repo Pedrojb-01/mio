@@ -36,11 +36,12 @@ function EmptyState({ mode, onCreate }) {
 }
 
 export default function SessionsPage({ mode, title }) {
-  const navigate                 = useNavigate()
-  const [sessions, setSessions]   = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const navigate                    = useNavigate()
+  const [sessions, setSessions]     = useState([])
+  const [isLoading, setIsLoading]   = useState(true)
   const [isCreating, setIsCreating] = useState(false)
-  const [error, setError]         = useState(null)
+  const [error, setError]           = useState(null)
+  const [query, setQuery]           = useState('')
 
   useEffect(() => {
     async function fetchSessions() {
@@ -83,12 +84,18 @@ export default function SessionsPage({ mode, title }) {
     )
   }
 
+    const filtered = query.trim()
+    ? sessions.filter(s =>
+        (s.title ?? 'Untitled session').toLowerCase().includes(query.toLowerCase())
+      )
+    : sessions
+
   return (
     <DashboardLayout>
       <div className="p-8 max-w-4xl mx-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-semibold text-primary">{title}</h1>
             <p className="text-sm text-muted mt-0.5">
@@ -102,6 +109,29 @@ export default function SessionsPage({ mode, title }) {
             </Button>
           )}
         </div>
+
+        {/* Search */}
+        {sessions.length > 0 && (
+          <div className="relative mb-8">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              aria-hidden="true">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="search"
+              placeholder="Search sessions…"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm text-primary bg-surface
+                border border-border placeholder:text-muted
+                focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent
+                transition-colors duration-150"
+            />
+          </div>
+        )}
 
         {/* Error */}
         {error && (
@@ -126,10 +156,16 @@ export default function SessionsPage({ mode, title }) {
           <EmptyState mode={mode} onCreate={handleCreate} />
         )}
 
-        {/* Session cards */}
-        {!isLoading && sessions.length > 0 && (
+        {!isLoading && sessions.length > 0 && filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <p className="text-sm font-semibold text-primary mb-1">No sessions found</p>
+            <p className="text-sm text-muted">Try a different search term.</p>
+          </div>
+        )}
+
+        {!isLoading && filtered.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sessions.map(session => (
+            {filtered.map(session => (
               <SessionCard
                 key={session.id}
                 session={session}
