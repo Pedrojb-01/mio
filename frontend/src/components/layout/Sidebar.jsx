@@ -75,7 +75,7 @@ function UserMenu({ user }) {
         aria-expanded={open}
         aria-haspopup="true"
         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg
-          hover:bg-surface transition-colors duration-150 text-left"
+          hover:bg-surface transition-colors duration-150 text-left cursor-pointer"
       >
         {/* Avatar */}
         <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center shrink-0">
@@ -135,7 +135,7 @@ function UserMenu({ user }) {
               role="menuitem"
               onClick={handleLogout}
             className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500
-              hover:bg-red-50 transition-colors duration-150"
+              hover:bg-red-50 transition-colors duration-150 cursor-pointer"
           >
             Sign out
           </button>

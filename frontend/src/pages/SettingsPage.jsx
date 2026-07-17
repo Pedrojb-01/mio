@@ -47,7 +47,7 @@ function Toggle({ enabled, onChange, label }) {
       onClick={() => onChange(!enabled)}
       className={`
         relative inline-flex h-5 w-9 items-center rounded-full
-        transition-colors duration-200 focus-visible:ring-2
+        transition-colors duration-200 cursor-pointer focus-visible:ring-2
         focus-visible:ring-accent focus-visible:ring-offset-2
         ${enabled ? 'bg-accent' : 'bg-border'}
       `}
@@ -78,7 +78,7 @@ export default function SettingsPage() {
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-sm text-muted hover:text-primary
-              transition-colors duration-150 mb-4"
+              transition-colors duration-150 mb-4 cursor-pointer"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round"

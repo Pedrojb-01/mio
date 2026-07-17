@@ -88,7 +88,7 @@ export default function Input({
           onClick={() => setShowPassword(prev => !prev)}
           aria-label={showPassword ? 'Hide password' : 'Show password'}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted
-            hover:text-primary transition-colors duration-150"
+            hover:text-primary transition-colors duration-150 cursor-pointer"
         >
           {showPassword ? <IconEyeOff /> : <IconEye />}
         </button>

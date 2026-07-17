@@ -70,7 +70,7 @@ function ConfirmModal({ title, onConfirm, onCancel, isLoading }) {
             disabled={isLoading}
             className="px-4 py-2 rounded-lg text-sm font-medium text-primary
               bg-surface border border-border hover:brightness-110
-              transition-colors duration-150 disabled:opacity-50"
+              transition-colors duration-150 disabled:opacity-50 cursor-pointer"
           >
             Cancel
           </button>
@@ -79,7 +79,7 @@ function ConfirmModal({ title, onConfirm, onCancel, isLoading }) {
             disabled={isLoading}
             className="px-4 py-2 rounded-lg text-sm font-medium text-white
               bg-red-500 hover:bg-red-600 transition-colors duration-150
-              disabled:opacity-50"
+              disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? 'Deleting…' : 'Delete'}
           </button>
@@ -200,7 +200,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
           onClick={() => setMenuOpen(prev => !prev)}
           aria-label="Session options"
           className="p-1 rounded-md text-muted hover:text-primary hover:bg-surface
-            opacity-0 group-hover:opacity-100 transition-all duration-150"
+            opacity-0 group-hover:opacity-100 transition-all duration-150 cursor-pointer"
         >
           <IconDots />
         </button>
@@ -215,7 +215,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
               role="menuitem"
               onClick={() => { setMenuOpen(false); setRenaming(true) }}
               className="w-full px-4 py-2 text-sm text-left text-primary
-                hover:bg-surface transition-colors duration-150"
+                hover:bg-surface transition-colors duration-150 cursor-pointer"
             >
               Rename
             </button>
@@ -223,7 +223,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
               role="menuitem"
               onClick={handleDeleteClick}
               className="w-full px-4 py-2 text-sm text-left text-red-500
-                hover:bg-red-50 transition-colors duration-150"
+                hover:bg-red-50 transition-colors duration-150 cursor-pointer"
             >
               Delete
             </button>

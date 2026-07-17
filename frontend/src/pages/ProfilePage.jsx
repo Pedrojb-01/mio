@@ -162,7 +162,7 @@ export default function ProfilePage() {
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-sm text-muted hover:text-primary
-              transition-colors duration-150 mb-4"
+              transition-colors duration-150 mb-4 cursor-pointer"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round"
@@ -287,7 +287,7 @@ export default function ProfilePage() {
                   onClick={() => handleToneSelect(tone.value)}
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-xl border text-left
-                    transition-colors duration-150
+                    transition-colors duration-150 cursor-pointer
                     ${fields.voiceTone === tone.value
                       ? 'border-accent bg-soft'
                       : 'border-border bg-surface hover:bg-surface'

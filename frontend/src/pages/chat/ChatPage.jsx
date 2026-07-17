@@ -285,7 +285,7 @@ useEffect(() => {
             onClick={handleBack}
             aria-label="Go back"
             className="p-1.5 rounded-lg text-muted hover:text-primary
-              hover:bg-surface transition-colors duration-150"
+              hover:bg-surface transition-colors duration-150 cursor-pointer"
           >
             <IconArrowLeft />
           </button>
@@ -395,7 +395,7 @@ useEffect(() => {
                     }}
                     className="px-4 py-2.5 rounded-xl border border-border bg-surface
                       text-sm text-muted hover:text-primary hover:border-accent/40
-                      hover:bg-soft transition-colors duration-150"
+                      hover:bg-soft transition-colors duration-150 cursor-pointer"
                   >
                     {suggestion}
                   </button>
