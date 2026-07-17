@@ -118,7 +118,7 @@ function UserMenu({ user }) {
           </Link>
           {user.role === 'admin' && (
             <>
-              <div className="my-1 border-t border-border" />
+              <div className="border-t border-border" />
               <Link
                 to="/admin"
                 role="menuitem"
