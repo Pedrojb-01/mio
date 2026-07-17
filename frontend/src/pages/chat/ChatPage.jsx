@@ -111,10 +111,23 @@ export default function ChatPage() {
   const [error, setError]         = useState(null)
   const [showScrollButton, setShowScrollButton] = useState(false)
 
-  const messagesContainerRef = useRef(null)
+ const messagesContainerRef = useRef(null)
   const bottomRef  = useRef(null)
   const inputRef   = useRef(null)
+  const drafts     = useRef({})
   const MAX_LENGTH = 2000
+
+  const prevIdRef = useRef(id)
+
+  // When id changes: save draft for previous session, restore for new one
+  useEffect(() => {
+    const prevId = prevIdRef.current
+    if (prevId !== id) {
+      drafts.current[prevId] = input  // save current input under previous session
+      prevIdRef.current = id
+      setInput(drafts.current[id] ?? '')  // restore draft for new session
+    }
+  }, [id])
 
   // ─── Load session + history ─────────────────────────────────────────────────
 
@@ -193,6 +206,7 @@ useEffect(() => {
     if (!clean || isStreaming) return
 
     setInput('')
+    drafts.current[id] = ''
     setError(null)
 
     // Optimistically add user message to UI
