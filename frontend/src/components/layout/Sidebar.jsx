@@ -96,7 +96,7 @@ function UserMenu({ user }) {
         <div
           role="menu"
           className="absolute bottom-full left-0 right-0 mb-1 bg-surface border border-border
-            rounded-xl shadow-lg py-1 z-50"
+            rounded-xl shadow-lg pt-1 overflow-hidden z-50"
         >
           <Link
             to="/profile"
@@ -130,10 +130,10 @@ function UserMenu({ user }) {
               </Link>
             </>
           )}
-          <div className="my-1 border-t border-border" />
-          <button
-            role="menuitem"
-            onClick={handleLogout}
+          <div className="border-t border-border" />
+            <button
+              role="menuitem"
+              onClick={handleLogout}
             className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500
               hover:bg-red-50 transition-colors duration-150"
           >

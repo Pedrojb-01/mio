@@ -209,7 +209,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
           <div
             role="menu"
             className="absolute right-0 top-full mt-1 w-36 bg-surface border border-border
-              rounded-xl shadow-lg py-1 z-10"
+              rounded-xl shadow-lg pt-1 overflow-hidden z-10"
           >
             <button
               role="menuitem"
