@@ -86,6 +86,19 @@ function MessageBubble({ role, content, isStreaming }) {
 
 // ─── ChatPage ─────────────────────────────────────────────────────────────────
 
+const SUGGESTIONS = {
+  brainstorm: [
+    'Give me 5 content ideas for this week',
+    'What topics are trending for my niche?',
+    'Create hooks for my next 3 posts',
+  ],
+  creation: [
+    'Write a post announcing a new product',
+    'Create a caption for a behind-the-scenes post',
+    'Write a post using a customer testimonial',
+  ],
+}
+
 export default function ChatPage() {
   const { id }     = useParams()
   const navigate    = useNavigate()
@@ -294,24 +307,27 @@ useEffect(() => {
 
             {/* Empty state — new session */}
             {!isLoadingHistory && messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="h-12 w-12 rounded-2xl bg-soft flex items-center
-                  justify-center mb-4">
-                  <span className="text-xl">
-                    {session?.mode === 'brainstorm' ? '💡' : '✏️'}
-                  </span>
+              <>
+                {/* Icon + title + description — centered */}
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="h-12 w-12 rounded-2xl bg-soft flex items-center
+                    justify-center mb-4">
+                    <span className="text-xl">
+                      {session?.mode === 'brainstorm' ? '💡' : '✏️'}
+                    </span>
+                  </div>
+                  <h2 className="text-sm font-semibold text-primary mb-1">
+                    {session?.mode === 'brainstorm'
+                      ? 'Start brainstorming'
+                      : 'Start creating'}
+                  </h2>
+                  <p className="text-sm text-muted max-w-xs">
+                    {session?.mode === 'brainstorm'
+                      ? 'Ask Mio for content ideas, angles, hooks or anything to spark creativity.'
+                      : 'Describe the post you want and Mio will write it in your brand voice.'}
+                  </p>
                 </div>
-                <h2 className="text-sm font-semibold text-primary mb-1">
-                  {session?.mode === 'brainstorm'
-                    ? 'Start brainstorming'
-                    : 'Start creating'}
-                </h2>
-                <p className="text-sm text-muted max-w-xs">
-                  {session?.mode === 'brainstorm'
-                    ? 'Ask Mio for content ideas, angles, hooks or anything to spark creativity.'
-                    : 'Describe the post you want and Mio will write it in your brand voice.'}
-                </p>
-              </div>
+              </>
             )}
 
             {/* Message list */}
@@ -352,6 +368,26 @@ useEffect(() => {
         {/* Input area */}
         <div className="shrink-0 px-6 pb-4 pt-0">
           <div className="max-w-2xl mx-auto">
+
+            {/* Suggested prompts — only on empty session */}
+            {!isLoadingHistory && messages.length === 0 && (
+              <div className="flex flex-wrap justify-center gap-2 mb-3">
+                {(SUGGESTIONS[session?.mode] ?? []).map((suggestion, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setInput(suggestion)
+                      inputRef.current?.focus()
+                    }}
+                    className="px-4 py-2.5 rounded-xl border border-border bg-surface
+                      text-sm text-muted hover:text-primary hover:border-accent/40
+                      hover:bg-soft transition-colors duration-150"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Streaming error */}
             {error && isStreaming === false && messages.length > 0 && (
