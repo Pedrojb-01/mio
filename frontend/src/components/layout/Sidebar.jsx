@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext.jsx'
 import { sessionsApi } from '../../api/sessions.js'
@@ -38,10 +39,62 @@ function IconChevron({ open }) {
 
 // ─── User dropdown ────────────────────────────────────────────────────────────
 
+function SignOutModal({ onConfirm, onCancel }) {
+  useEffect(() => {
+    function handleKey(e) {
+      if (e.key === 'Escape') onCancel()
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onCancel])
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onMouseDown={e => {
+          e.preventDefault()
+          e.stopPropagation()
+          onCancel()
+        }}
+      />
+      <div
+        className="relative bg-surface border border-border rounded-2xl shadow-xl
+          p-6 w-full max-w-sm"
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-base font-semibold text-primary mb-1">Sign out?</h2>
+        <p className="text-sm text-muted mb-6">
+          Are you sure you want to sign out?
+        </p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-primary
+              bg-surface border border-border hover:brightness-110
+              transition-colors duration-150 cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white
+              bg-red-500 hover:bg-red-600 transition-colors duration-150 cursor-pointer"
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 function UserMenu({ user }) {
   const { logout }       = useAuth()
   const navigate          = useNavigate()
-  const [open, setOpen]   = useState(false)
+  const [open, setOpen]           = useState(false)
+  const [confirming, setConfirming] = useState(false)
   const menuRef           = useRef(null)
 
   // Close dropdown when clicking outside
@@ -55,8 +108,13 @@ function UserMenu({ user }) {
     return ()  => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
-  async function handleLogout() {
+  function handleLogoutClick() {
     setOpen(false)
+    setConfirming(true)
+  }
+
+  async function handleLogoutConfirm() {
+    setConfirming(false)
     await logout()
     navigate('/', { replace: true })
   }
@@ -133,7 +191,7 @@ function UserMenu({ user }) {
           <div className="border-t border-border" />
             <button
               role="menuitem"
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
             className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500
               hover:bg-red-50 transition-colors duration-150 cursor-pointer"
           >
@@ -141,9 +199,16 @@ function UserMenu({ user }) {
           </button>
         </div>
       )}
+      {confirming && (
+        <SignOutModal
+          onConfirm={handleLogoutConfirm}
+          onCancel={() => setConfirming(false)}
+        />
+      )}
     </div>
   )
 }
+
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
