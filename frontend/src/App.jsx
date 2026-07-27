@@ -12,7 +12,7 @@ import CreatePage      from './pages/dashboard/CreatePage.jsx'
 import ChatPage        from './pages/chat/ChatPage.jsx'
 import ProfilePage     from './pages/ProfilePage.jsx'
 import SettingsPage    from './pages/SettingsPage.jsx'
-import AdminUsersPage  from './pages/admin/AdminUsersPage.jsx'
+import AdminPage from './pages/admin/AdminPage.jsx'
 
 // ─── Route Guards ────────────────────────────────────────────────────────────
 
@@ -83,7 +83,7 @@ function AppRoutes() {
       <Route path="/settings"             element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 
       {/* Admin */}
-      <Route path="/admin" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
+      <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
 
       {/* Fallback: any unknown URL → landing */}
       <Route path="*" element={<Navigate to="/" replace />} />

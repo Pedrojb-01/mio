@@ -1,4 +1,4 @@
-const { listUsers, updateUserStatus } = require('../services/admin_service');
+const { listUsers, updateUserStatus, getStats } = require('../services/admin_service');
 
 const VALID_STATUSES = ['active', 'blocked'];
 
@@ -31,4 +31,16 @@ async function updateUserStatusController(req, res) {
   }
 }
 
-module.exports = { listUsersController, updateUserStatusController };
+async function getStatsController(req, res) {
+  try {
+    const stats = await getStats()
+    return res.status(200).json({ stats })
+  } catch (error) {
+    if (error.isAppError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+module.exports = { listUsersController, updateUserStatusController, getStatsController };
