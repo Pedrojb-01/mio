@@ -143,4 +143,23 @@ async function getStats(period = '7d') {
   }
 }
 
-module.exports = { listUsers, updateUserStatus, getStats };
+// Delete a user
+async function deleteUser(userId, requestingAdminId) {
+  if (userId === requestingAdminId) {
+    throw new AppError('You cannot delete your own account', 403)
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } })
+
+  if (!user) {
+    throw new AppError('User not found', 404)
+  }
+
+  if (user.role === 'admin') {
+    throw new AppError('Cannot delete an admin user', 403)
+  }
+
+  await prisma.user.delete({ where: { id: userId } })
+}
+
+module.exports = { listUsers, updateUserStatus, getStats, deleteUser };

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 import Toast from '../../components/ui/Toast.jsx'
 import Button from '../../components/ui/Button.jsx'
@@ -185,7 +186,7 @@ function StatsTab() {
 
 // ─── Users tab ────────────────────────────────────────────────────────────────
 
-function UserRow({ user, onStatusChange, isUpdating }) {
+function UserRow({ user, onStatusChange, onDelete, isUpdating, isDeleting }) {
   const isAdmin   = user.role === 'admin'
   const isBlocked = user.status === 'blocked'
 
@@ -220,26 +221,87 @@ function UserRow({ user, onStatusChange, isUpdating }) {
         <p className="text-xs text-muted mt-0.5">Joined {getRelativeDate(user.createdAt)}</p>
       </div>
       {!isAdmin && (
-        <Button
-          variant="secondary"
-          size="sm"
-          isLoading={isUpdating}
-          disabled={isUpdating}
-          onClick={() => onStatusChange(user.id, isBlocked ? 'active' : 'blocked')}
-        >
-          {isBlocked ? 'Unblock' : 'Block'}
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="secondary"
+            size="sm"
+            isLoading={isUpdating}
+            disabled={isUpdating || isDeleting}
+            onClick={() => onStatusChange(user.id, isBlocked ? 'active' : 'blocked')}
+          >
+            {isBlocked ? 'Unblock' : 'Block'}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            isLoading={isDeleting}
+            disabled={isUpdating || isDeleting}
+            onClick={() => onDelete(user.id, user.name)}
+            className="text-red-500 hover:text-red-600"
+          >
+            Delete
+          </Button>
+        </div>
       )}
     </div>
   )
 }
 
+function DeleteModal({ userName, onConfirm, onCancel, isLoading }) {
+  useEffect(() => {
+    function handleKey(e) { if (e.key === 'Escape') onCancel() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onCancel])
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onMouseDown={e => { e.preventDefault(); e.stopPropagation(); onCancel() }}
+      />
+      <div
+        className="relative bg-surface border border-border rounded-2xl shadow-xl p-6 w-full max-w-sm"
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-base font-semibold text-primary mb-1">Delete user?</h2>
+        <p className="text-sm text-muted mb-6">
+          <span className="font-medium text-primary">"{userName}"</span> and all their data will be permanently deleted.
+        </p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-primary
+              bg-surface border border-border hover:brightness-110
+              transition-colors duration-150 disabled:opacity-50 cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white
+              bg-red-500 hover:bg-red-600 transition-colors duration-150
+              disabled:opacity-50 cursor-pointer"
+          >
+            {isLoading ? 'Deleting…' : 'Delete'}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 function UsersTab() {
-  const [users, setUsers]           = useState([])
-  const [isLoading, setIsLoading]   = useState(true)
-  const [error, setError]           = useState(null)
-  const [updatingId, setUpdatingId] = useState(null)
-  const [toast, setToast]           = useState(null)
+  const [users, setUsers]               = useState([])
+  const [isLoading, setIsLoading]       = useState(true)
+  const [error, setError]               = useState(null)
+  const [updatingId, setUpdatingId]     = useState(null)
+  const [deletingId, setDeletingId]     = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null) // { id, name }
+  const [toast, setToast]               = useState(null)
 
   useEffect(() => {
     async function fetchUsers() {
@@ -271,6 +333,23 @@ function UsersTab() {
       })
     } finally {
       setUpdatingId(null)
+    }
+  }
+
+async function handleDelete(userId) {
+    setDeletingId(userId)
+    try {
+      await adminApi.deleteUser(userId)
+      setUsers(prev => prev.filter(u => u.id !== userId))
+      setToast({ message: 'User deleted successfully.', type: 'success' })
+    } catch (err) {
+      setToast({
+        message: err.isAppError ? err.message : 'Failed to delete user. Please try again.',
+        type: 'error',
+      })
+    } finally {
+      setDeletingId(null)
+      setConfirmDelete(null)
     }
   }
 
@@ -322,10 +401,21 @@ function UsersTab() {
               key={user.id}
               user={user}
               onStatusChange={handleStatusChange}
+              onDelete={(id, name) => setConfirmDelete({ id, name })}
               isUpdating={updatingId === user.id}
+              isDeleting={deletingId === user.id}
             />
           ))}
         </div>
+      )}
+
+      {confirmDelete && (
+        <DeleteModal
+          userName={confirmDelete.name}
+          onConfirm={() => handleDelete(confirmDelete.id)}
+          onCancel={() => setConfirmDelete(null)}
+          isLoading={!!deletingId}
+        />
       )}
 
       {toast && (
