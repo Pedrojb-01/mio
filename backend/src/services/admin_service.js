@@ -100,12 +100,32 @@ async function getStats(period = '7d') {
   let chartData = []
 
   if (groupByMonth) {
-    // Group by "Mon YYYY" — all time
+    // Find the earliest user (including admin) to use as chart start anchor
+    const firstUser = await prisma.user.findFirst({
+      orderBy: { createdAt: 'asc' },
+      select: { createdAt: true },
+    })
+
+    // Build month map from first user's month up to current month
     const monthMap = {}
+    if (firstUser) {
+      const start = new Date(firstUser.createdAt)
+      start.setDate(1)
+      start.setHours(0, 0, 0, 0)
+      const cursor = new Date(start)
+      while (cursor <= now) {
+        const label = cursor.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        monthMap[label] = 0
+        cursor.setMonth(cursor.getMonth() + 1)
+      }
+    }
+
+    // Count only role: 'user' per month
     for (const u of newUsersRaw) {
       const label = new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-      monthMap[label] = (monthMap[label] ?? 0) + 1
+      if (label in monthMap) monthMap[label]++
     }
+
     chartData = Object.entries(monthMap).map(([day, count]) => ({ day, count }))
   } else if (period === 'today') {
     // Group by hour (0h, 1h, … 23h)

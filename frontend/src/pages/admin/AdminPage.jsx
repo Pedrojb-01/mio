@@ -113,13 +113,22 @@ function StatsTab() {
             </div>
           </div>
         </div>
+        {stats.chartData.length === 0 ? (
+          <div className="h-[180px] flex items-center justify-center">
+            <p className="text-sm text-muted">No data for this period.</p>
+          </div>
+        ) : (
         <ResponsiveContainer width="100%" height={180}>
-          <LineChart data={stats.chartData} margin={{ top: 4, right: 8, left: -28, bottom: 0 }}>yy
+          <LineChart
+            data={stats.chartData}
+            margin={{ top: 4, right: 8, left: -28, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="day"
               tick={{ fontSize: 11, fill: 'var(--color-muted)' }}
-              tickFormatter={d => d.split(',')[0]}
+              ticks={[stats.chartData[0]?.day, stats.chartData[stats.chartData.length - 1]?.day]}
+              tickFormatter={d => d?.split(',')[0] ?? ''}
               axisLine={false}
               tickLine={false}
             />
@@ -149,6 +158,7 @@ function StatsTab() {
             />
           </LineChart>
         </ResponsiveContainer>
+        )}
       </div>
 
       {/* Cards — Users */}
