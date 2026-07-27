@@ -156,9 +156,12 @@ export default function OnboardingPage() {
       <div className="w-full max-w-lg">
 
         {/* Logo */}
-        <div className="mb-8 text-center">
-          <span className="text-2xl font-semibold tracking-tight text-primary">mio</span>
-          <p className="mt-1 text-sm text-muted">Let's set up your workspace</p>
+        <div className="mb-8 flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <img src="/favicon.svg" alt="Mio" className="h-8 w-8 rounded-xl" />
+            <span className="text-2xl font-semibold tracking-tight text-primary">mio</span>
+          </div>
+          <p className="text-sm text-muted">Let's set up your workspace</p>
         </div>
 
         {/* Progress */}
