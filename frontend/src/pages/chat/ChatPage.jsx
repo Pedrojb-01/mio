@@ -432,7 +432,7 @@ useEffect(() => {
                 className="w-full bg-transparent text-sm text-primary placeholder:text-muted
                   resize-none outline-none max-h-72 overflow-y-auto
                   disabled:cursor-not-allowed py-2"
-                style={{ scrollbarWidth: 'thin' }}
+                style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--color-border) transparent', scrollbarGutter: 'stable' }}
               />
 
               {/* Send button */}
