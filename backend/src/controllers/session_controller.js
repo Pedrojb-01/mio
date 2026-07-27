@@ -12,8 +12,11 @@ async function sendMessageController(req, res) {
   const sessionId = req.params.id;
 
 
-  if (!message || message.trim() === '') {
+  if (!message || typeof message !== 'string' || message.trim() === '') {
     return res.status(400).json({ message: 'Message cannot be empty' });
+  }
+  if (message.trim().length > 2000) {
+    return res.status(400).json({ message: 'Message must be at most 2000 characters' });
   }
 
   // Fetch profile and verify onboarding is complete
@@ -135,6 +138,9 @@ async function deleteSessionController(req, res) {
 async function renameSessionController(req, res) {
   try {
     const { title } = req.body;
+    if (typeof title === 'string' && title.trim().length > 50) {
+      return res.status(400).json({ message: 'Title must be at most 50 characters' });
+    }
     await renameSession(req.params.id, req.user.id, title);
     return res.status(200).json({ message: 'Session renamed successfully' });
   } catch (error) {

@@ -115,7 +115,7 @@ export default function SessionCard({ session, onDelete, onRename }) {
   }, [renaming])
 
   async function handleRename() {
-    const clean = sanitizeField(title, 100).trim()
+    const clean = sanitizeField(title, 50).trim()
     if (!clean) { setTitle(session.title ?? 'Untitled session'); setRenaming(false); return }
     if (clean === session.title) { setRenaming(false); return }
     try {
@@ -170,17 +170,27 @@ export default function SessionCard({ session, onDelete, onRename }) {
 
       {/* Title */}
       {renaming ? (
-        <input
-          ref={inputRef}
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          onBlur={handleRename}
-          onKeyDown={handleKeyDown}
-          maxLength={100}
-          onClick={e => e.stopPropagation()}
-          className="w-full text-sm font-semibold text-primary bg-transparent border-b
-            border-accent outline-none pb-0.5 mb-2"
-        />
+        <>
+          <input
+            ref={inputRef}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            onBlur={handleRename}
+            onKeyDown={handleKeyDown}
+            maxLength={50}
+            onClick={e => e.stopPropagation()}
+            className="w-full text-sm font-semibold text-primary bg-transparent border-b
+              border-accent outline-none pb-0.5"
+          />
+          {title.length >= 50 && (
+            <p
+              className="text-xs text-red-500 text-right mt-0.5 mb-1"
+              onClick={e => e.stopPropagation()}
+            >
+              {title.length}/50
+            </p>
+          )}
+        </>
       ) : (
         <p className="text-sm font-semibold text-primary mb-2 truncate pr-6">
           {title}

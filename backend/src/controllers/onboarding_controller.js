@@ -1,4 +1,5 @@
 const { completeOnboarding } = require('../services/onboarding_service');
+const { validateRequiredString, validateOptionalString } = require('../utils/validate');
 
 const VALID_VOICE_TONES = ['professional', 'casual', 'inspirational', 'educational', 'humorous'];
 
@@ -16,9 +17,18 @@ async function completeOnboardingController(req, res) {
     } = req.body;
 
     // Validate required fields
-    if (!businessName || !niche) {
-      return res.status(400).json({ message: 'Business name and niche are required' });
-    }
+    const businessNameError = validateRequiredString(businessName, 'Business name', 64);
+    const nicheError        = validateRequiredString(niche,         'Niche',         64);
+    if (businessNameError) return res.status(400).json({ message: businessNameError });
+    if (nicheError)        return res.status(400).json({ message: nicheError });
+
+    // Validate optional text fields
+    const descError   = validateOptionalString(businessDescription, 'Business description', 500);
+    const diffError   = validateOptionalString(differentiators,     'Differentiators',      500);
+    const audError    = validateOptionalString(targetAudience,      'Target audience',      500);
+    if (descError)  return res.status(400).json({ message: descError });
+    if (diffError)  return res.status(400).json({ message: diffError });
+    if (audError)   return res.status(400).json({ message: audError });
 
     // Validate voiceTone enum
     if (voiceTone && !VALID_VOICE_TONES.includes(voiceTone)) {

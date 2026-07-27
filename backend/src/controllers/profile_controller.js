@@ -1,4 +1,5 @@
 const { getProfileWithUser, updateProfile } = require('../services/profile_service');
+const { validateRequiredString, validateOptionalString } = require('../utils/validate');
 
 const VALID_VOICE_TONES = ['professional', 'casual', 'inspirational', 'educational', 'humorous'];
 
@@ -27,15 +28,30 @@ async function updateProfileController(req, res) {
     if (platform !== undefined) data.platform = platform;
     if (voiceTone !== undefined) data.voiceTone = voiceTone;
 
-    // Validate that required fields are not being emptied
-    if (data.name === '') {
-      return res.status(400).json({ message: 'Name cannot be empty' });
+    // Validate fields that were provided
+    if (data.name !== undefined) {
+      const err = validateRequiredString(data.name, 'Name', 64);
+      if (err) return res.status(400).json({ message: err });
     }
-    if (data.businessName === '') {
-      return res.status(400).json({ message: 'Business name cannot be empty' });
+    if (data.businessName !== undefined) {
+      const err = validateRequiredString(data.businessName, 'Business name', 64);
+      if (err) return res.status(400).json({ message: err });
     }
-    if (data.niche === '') {
-      return res.status(400).json({ message: 'Niche cannot be empty' });
+    if (data.niche !== undefined) {
+      const err = validateRequiredString(data.niche, 'Niche', 64);
+      if (err) return res.status(400).json({ message: err });
+    }
+    if (data.businessDescription !== undefined) {
+      const err = validateOptionalString(data.businessDescription, 'Business description', 500);
+      if (err) return res.status(400).json({ message: err });
+    }
+    if (data.differentiators !== undefined) {
+      const err = validateOptionalString(data.differentiators, 'Differentiators', 500);
+      if (err) return res.status(400).json({ message: err });
+    }
+    if (data.targetAudience !== undefined) {
+      const err = validateOptionalString(data.targetAudience, 'Target audience', 500);
+      if (err) return res.status(400).json({ message: err });
     }
 
     // Validate voiceTone enum

@@ -1,12 +1,17 @@
 const { register, login, logout } = require('../services/auth_service');
+const { validateRequiredString, validateEmail, validatePassword } = require('../utils/validate');
 
 async function registerController(req, res) {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email and password are required' });
-    }
+    const nameError     = validateRequiredString(name,     'Name',     64);
+    const emailError    = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    if (nameError)     return res.status(400).json({ message: nameError });
+    if (emailError)    return res.status(400).json({ message: emailError });
+    if (passwordError) return res.status(400).json({ message: passwordError });
 
     const user = await register(name, email, password);
     return res.status(201).json({ message: 'User registered successfully', user });
