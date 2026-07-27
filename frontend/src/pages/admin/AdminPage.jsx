@@ -225,20 +225,20 @@ function UserRow({ user, onStatusChange, onDelete, onPromote, isUpdating, isDele
           <Button
             variant="secondary"
             size="sm"
-            isLoading={isUpdating}
-            disabled={isUpdating || isDeleting}
-            onClick={() => onStatusChange(user.id, isBlocked ? 'active' : 'blocked')}
-          >
-            {isBlocked ? 'Unblock' : 'Block'}
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
             isLoading={isPromoting}
             disabled={isUpdating || isDeleting || isPromoting}
             onClick={() => onPromote(user.id, user.name)}
           >
             Make Admin
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            isLoading={isUpdating}
+            disabled={isUpdating || isDeleting || isPromoting}
+            onClick={() => onStatusChange(user.id, isBlocked ? 'active' : 'blocked')}
+          >
+            {isBlocked ? 'Unblock' : 'Block'}
           </Button>
           <Button
             variant="secondary"
