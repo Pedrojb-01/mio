@@ -33,7 +33,9 @@ async function updateUserStatusController(req, res) {
 
 async function getStatsController(req, res) {
   try {
-    const stats = await getStats()
+    const VALID_PERIODS = ['today', '7d', '30d', 'all']
+    const period = VALID_PERIODS.includes(req.query.period) ? req.query.period : '7d'
+    const stats = await getStats(period)
     return res.status(200).json({ stats })
   } catch (error) {
     if (error.isAppError) {

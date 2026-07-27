@@ -48,13 +48,28 @@ async function updateUserStatus(userId, status) {
 }
 
 // Get platform stats
-async function getStats() {
+async function getStats(period = '7d') {
   const now = new Date()
 
-  // Last 7 days window
-  const sevenDaysAgo = new Date(now)
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
-  sevenDaysAgo.setHours(0, 0, 0, 0)
+  // Build the date window and grouping strategy based on period
+  let since = null
+  let groupByMonth = false
+
+  if (period === 'today') {
+    since = new Date(now)
+    since.setHours(0, 0, 0, 0)
+  } else if (period === '7d') {
+    since = new Date(now)
+    since.setDate(since.getDate() - 6)
+    since.setHours(0, 0, 0, 0)
+  } else if (period === '30d') {
+    since = new Date(now)
+    since.setDate(since.getDate() - 29)
+    since.setHours(0, 0, 0, 0)
+  } else {
+    // all — group by month
+    groupByMonth = true
+  }
 
   const [
     totalUsers,
@@ -76,32 +91,55 @@ async function getStats() {
     prisma.session.count({ where: { mode: 'creation' } }),
     prisma.message.count(),
     prisma.user.findMany({
-      where: { role: 'user', createdAt: { gte: sevenDaysAgo } },
+      where: { role: 'user', ...(since ? { createdAt: { gte: since } } : {}) },
       select: { createdAt: true },
+      orderBy: { createdAt: 'asc' },
     }),
   ])
 
-  // Group new users by day label (Mon, Tue, …)
-  const dayMap = {}
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(now)
-    d.setDate(d.getDate() - i)
-    const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-    dayMap[label] = 0
-  }
+  let chartData = []
 
-  for (const u of newUsersRaw) {
-    const label = new Date(u.createdAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-    if (label in dayMap) dayMap[label]++
+  if (groupByMonth) {
+    // Group by "Mon YYYY" — all time
+    const monthMap = {}
+    for (const u of newUsersRaw) {
+      const label = new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      monthMap[label] = (monthMap[label] ?? 0) + 1
+    }
+    chartData = Object.entries(monthMap).map(([day, count]) => ({ day, count }))
+  } else if (period === 'today') {
+    // Group by hour (0h, 1h, … 23h)
+    const hourMap = {}
+    for (let h = 0; h < 24; h++) {
+      hourMap[`${h}h`] = 0
+    }
+    for (const u of newUsersRaw) {
+      const hour = new Date(u.createdAt).getHours()
+      hourMap[`${hour}h`]++
+    }
+    chartData = Object.entries(hourMap).map(([day, count]) => ({ day, count }))
+  } else {
+    // Group by day — 7d or 30d
+    const days = period === '7d' ? 7 : 30
+    const dayMap = {}
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now)
+      d.setDate(d.getDate() - i)
+      const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      dayMap[label] = 0
+    }
+    for (const u of newUsersRaw) {
+      const label = new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      if (label in dayMap) dayMap[label]++
+    }
+    chartData = Object.entries(dayMap).map(([day, count]) => ({ day, count }))
   }
-
-  const newUsersPerDay = Object.entries(dayMap).map(([day, count]) => ({ day, count }))
 
   return {
     users: { total: totalUsers, active: activeUsers, blocked: blockedUsers, onboardingComplete },
     sessions: { total: totalSessions, brainstorm: brainstormSessions, creation: creationSessions },
     messages: { total: totalMessages },
-    newUsersPerDay,
+    chartData,
   }
 }
 

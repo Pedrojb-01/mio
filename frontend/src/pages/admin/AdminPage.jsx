@@ -36,15 +36,25 @@ function StatCard({ label, value }) {
 
 // ─── Stats tab ────────────────────────────────────────────────────────────────
 
+const PERIODS = [
+  { label: 'Today',      value: 'today' },
+  { label: 'Last 7 days', value: '7d'   },
+  { label: 'Last 30 days', value: '30d' },
+  { label: 'All time',   value: 'all'   },
+]
+
 function StatsTab() {
   const [stats, setStats]         = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError]         = useState(null)
+  const [period, setPeriod]       = useState('7d')
 
   useEffect(() => {
     async function fetchStats() {
+      setIsLoading(true)
+      setError(null)
       try {
-        const data = await adminApi.getStats()
+        const data = await adminApi.getStats(period)
         setStats(data.stats)
       } catch (err) {
         setError(err.isAppError ? err.message : 'Failed to load stats. Please refresh the page.')
@@ -53,7 +63,7 @@ function StatsTab() {
       }
     }
     fetchStats()
-  }, [])
+  }, [period])
 
   if (isLoading) return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -77,10 +87,33 @@ function StatsTab() {
 
       {/* Chart */}
       <div className="bg-surface border border-border rounded-2xl p-6">
-        <p className="text-sm font-medium text-primary mb-1">New users</p>
-        <p className="text-xs text-muted mb-6">Last 7 days</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p className="text-sm font-medium text-primary mb-1">New users</p>
+            <p className="text-xs text-muted">{PERIODS.find(p => p.value === period)?.label}</p>
+          </div>
+          <div className="relative">
+            <select
+              value={period}
+              onChange={e => setPeriod(e.target.value)}
+              className="text-xs text-primary bg-surface border border-border rounded-lg
+                pl-3 pr-8 py-1.5 outline-none cursor-pointer appearance-none"
+            >
+              {PERIODS.map(p => (
+                <option key={p.value} value={p.value}>{p.label}</option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                className="text-muted">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+        </div>
         <ResponsiveContainer width="100%" height={180}>
-          <LineChart data={stats.newUsersPerDay} margin={{ top: 4, right: 8, left: -28, bottom: 0 }}>
+          <LineChart data={stats.chartData} margin={{ top: 4, right: 8, left: -28, bottom: 0 }}>yy
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="day"
