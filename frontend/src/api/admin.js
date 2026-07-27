@@ -5,4 +5,5 @@ export const adminApi = {
   updateUserStatus: (id, status) => api.patch(`/admin/users/${id}/status`, { status }),
   getStats:         (period = '7d') => api.get(`/admin/stats?period=${period}`),
   deleteUser:       (id)         => api.delete(`/admin/users/${id}`),
+  promoteUser:      (id)         => api.patch(`/admin/users/${id}/role`, {}),
 }

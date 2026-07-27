@@ -186,7 +186,7 @@ function StatsTab() {
 
 // ─── Users tab ────────────────────────────────────────────────────────────────
 
-function UserRow({ user, onStatusChange, onDelete, isUpdating, isDeleting }) {
+function UserRow({ user, onStatusChange, onDelete, onPromote, isUpdating, isDeleting, isPromoting }) {
   const isAdmin   = user.role === 'admin'
   const isBlocked = user.status === 'blocked'
 
@@ -234,8 +234,17 @@ function UserRow({ user, onStatusChange, onDelete, isUpdating, isDeleting }) {
           <Button
             variant="secondary"
             size="sm"
+            isLoading={isPromoting}
+            disabled={isUpdating || isDeleting || isPromoting}
+            onClick={() => onPromote(user.id, user.name)}
+          >
+            Make Admin
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
             isLoading={isDeleting}
-            disabled={isUpdating || isDeleting}
+            disabled={isUpdating || isDeleting || isPromoting}
             onClick={() => onDelete(user.id, user.name)}
             className="text-red-500 hover:text-red-600"
           >
@@ -294,14 +303,63 @@ function DeleteModal({ userName, onConfirm, onCancel, isLoading }) {
   )
 }
 
+function PromoteModal({ userName, onConfirm, onCancel, isLoading }) {
+  useEffect(() => {
+    function handleKey(e) { if (e.key === 'Escape') onCancel() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onCancel])
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onMouseDown={e => { e.preventDefault(); e.stopPropagation(); onCancel() }}
+      />
+      <div
+        className="relative bg-surface border border-border rounded-2xl shadow-xl p-6 w-full max-w-sm"
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-base font-semibold text-primary mb-1">Make admin?</h2>
+        <p className="text-sm text-muted mb-6">
+          <span className="font-medium text-primary">"{userName}"</span> will become an admin. This action cannot be undone.
+        </p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-primary
+              bg-surface border border-border hover:brightness-110
+              transition-colors duration-150 disabled:opacity-50 cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white
+              bg-accent hover:brightness-110 transition-colors duration-150
+              disabled:opacity-50 cursor-pointer"
+          >
+            {isLoading ? 'Promoting…' : 'Confirm'}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
 function UsersTab() {
-  const [users, setUsers]               = useState([])
-  const [isLoading, setIsLoading]       = useState(true)
-  const [error, setError]               = useState(null)
-  const [updatingId, setUpdatingId]     = useState(null)
-  const [deletingId, setDeletingId]     = useState(null)
-  const [confirmDelete, setConfirmDelete] = useState(null) // { id, name }
-  const [toast, setToast]               = useState(null)
+  const [users, setUsers]                 = useState([])
+  const [isLoading, setIsLoading]         = useState(true)
+  const [error, setError]                 = useState(null)
+  const [updatingId, setUpdatingId]       = useState(null)
+  const [deletingId, setDeletingId]       = useState(null)
+  const [promotingId, setPromotingId]     = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(null)
+  const [confirmPromote, setConfirmPromote] = useState(null)
+  const [toast, setToast]                 = useState(null)
 
   useEffect(() => {
     async function fetchUsers() {
@@ -350,6 +408,23 @@ async function handleDelete(userId) {
     } finally {
       setDeletingId(null)
       setConfirmDelete(null)
+    }
+  }
+
+async function handlePromote(userId) {
+    setPromotingId(userId)
+    try {
+      const data = await adminApi.promoteUser(userId)
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: data.user.role } : u))
+      setToast({ message: 'User promoted to admin successfully.', type: 'success' })
+    } catch (err) {
+      setToast({
+        message: err.isAppError ? err.message : 'Failed to promote user. Please try again.',
+        type: 'error',
+      })
+    } finally {
+      setPromotingId(null)
+      setConfirmPromote(null)
     }
   }
 
@@ -402,11 +477,22 @@ async function handleDelete(userId) {
               user={user}
               onStatusChange={handleStatusChange}
               onDelete={(id, name) => setConfirmDelete({ id, name })}
+              onPromote={(id, name) => setConfirmPromote({ id, name })}
               isUpdating={updatingId === user.id}
               isDeleting={deletingId === user.id}
+              isPromoting={promotingId === user.id}
             />
           ))}
         </div>
+      )}
+
+      {confirmPromote && (
+        <PromoteModal
+          userName={confirmPromote.name}
+          onConfirm={() => handlePromote(confirmPromote.id)}
+          onCancel={() => setConfirmPromote(null)}
+          isLoading={!!promotingId}
+        />
       )}
 
       {confirmDelete && (

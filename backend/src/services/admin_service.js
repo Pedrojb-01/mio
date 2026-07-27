@@ -162,4 +162,29 @@ async function deleteUser(userId, requestingAdminId) {
   await prisma.user.delete({ where: { id: userId } })
 }
 
-module.exports = { listUsers, updateUserStatus, getStats, deleteUser };
+// Promote a user to admin
+async function promoteUser(userId, requestingAdminId) {
+  if (userId === requestingAdminId) {
+    throw new AppError('You cannot change your own role', 403)
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } })
+
+  if (!user) {
+    throw new AppError('User not found', 404)
+  }
+
+  if (user.role === 'admin') {
+    throw new AppError('User is already an admin', 409)
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { role: 'admin' },
+    select: { id: true, name: true, email: true, status: true, role: true },
+  })
+
+  return updatedUser
+}
+
+module.exports = { listUsers, updateUserStatus, getStats, deleteUser, promoteUser };
