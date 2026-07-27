@@ -286,13 +286,15 @@ export default function Sidebar() {
                 key={session.id}
                 to={`/chat/${session.id}`}
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
-                  transition-colors duration-150 truncate
+                  transition-colors duration-150
                   ${activeChatId === session.id
                     ? 'bg-soft text-accent font-medium'
                     : 'text-muted hover:text-primary hover:bg-surface'
                   }`}
               >
-                {session.mode === 'brainstorm' ? <IconBrainstorm /> : <IconCreate />}
+                <span className="shrink-0">
+                  {session.mode === 'brainstorm' ? <IconBrainstorm /> : <IconCreate />}
+                </span>
                 <span className="truncate">{session.title ?? 'Untitled session'}</span>
               </Link>
             ))}
