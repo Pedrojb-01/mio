@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext.jsx'
 
 // Pages 
 import LandingPage     from './pages/LandingPage.jsx'
+import NotFoundPage    from './pages/NotFoundPage.jsx'
 import LoginPage       from './pages/auth/LoginPage.jsx'
 import RegisterPage    from './pages/auth/RegisterPage.jsx'
 import OnboardingPage  from './pages/onboarding/OnboardingPage.jsx'
@@ -85,8 +86,8 @@ function AppRoutes() {
       {/* Admin */}
       <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
 
-      {/* Fallback: any unknown URL → landing */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Fallback: any unknown URL → 404 */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }
