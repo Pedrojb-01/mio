@@ -12,7 +12,6 @@ async function completeOnboardingController(req, res) {
       businessDescription,
       differentiators,
       targetAudience,
-      platform,
       voiceTone
     } = req.body;
 
@@ -41,7 +40,6 @@ async function completeOnboardingController(req, res) {
       businessDescription,
       differentiators,
       targetAudience,
-      platform,
       voiceTone
     });
 

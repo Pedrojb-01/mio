@@ -28,7 +28,6 @@ model Profile {
   businessDescription String?
   differentiators     String?
   targetAudience      String?
-  platform            String?    @db.VarChar(50)
   voiceTone           VoiceTone?
   onboardingComplete  Boolean    @default(false)
   updatedAt           DateTime   @updatedAt

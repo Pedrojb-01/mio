@@ -13,7 +13,6 @@ async function updateProfileController(req, res) {
       businessDescription,
       differentiators,
       targetAudience,
-      platform,
       voiceTone
     } = req.body;
 
@@ -25,7 +24,6 @@ async function updateProfileController(req, res) {
     if (businessDescription !== undefined) data.businessDescription = businessDescription;
     if (differentiators !== undefined) data.differentiators = differentiators;
     if (targetAudience !== undefined) data.targetAudience = targetAudience;
-    if (platform !== undefined) data.platform = platform;
     if (voiceTone !== undefined) data.voiceTone = voiceTone;
 
     // Validate fields that were provided

@@ -9,7 +9,6 @@ async function completeOnboarding(userId, data) {
     businessDescription,
     differentiators,
     targetAudience,
-    platform,
     voiceTone
   } = data;
 
@@ -31,7 +30,6 @@ async function completeOnboarding(userId, data) {
       businessDescription,
       differentiators,
       targetAudience,
-      platform,
       voiceTone,
       onboardingComplete: true
     }

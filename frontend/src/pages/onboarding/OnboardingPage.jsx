@@ -132,7 +132,6 @@ export default function OnboardingPage() {
         targetAudience:      sanitizeField(fields.targetAudience,      500),
         differentiators:     sanitizeField(fields.differentiators,     500),
         voiceTone:           fields.voiceTone,
-        platform:            'instagram',
       }
 
       const data = await api.post('/onboarding', body)
