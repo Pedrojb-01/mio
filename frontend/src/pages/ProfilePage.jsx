@@ -174,8 +174,8 @@ export default function ProfilePage() {
 
           <div className="flex items-center gap-4">
             <div className="h-14 w-14 rounded-full bg-accent flex items-center
-              justify-center shrink-0">
-              <span className="text-lg font-semibold text-white">{initials}</span>
+              justify-center shrink-0 ring-2 ring-accent/30 ring-offset-2 ring-offset-surface">
+              <span className="text-lg font-bold text-white">{initials}</span>
             </div>
             <div>
               <h1 className="text-xl font-semibold text-primary">{user?.name}</h1>

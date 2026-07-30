@@ -136,8 +136,8 @@ function UserMenu({ user }) {
           hover:bg-surface transition-colors duration-150 text-left cursor-pointer"
       >
         {/* Avatar */}
-        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center shrink-0">
-          <span className="text-xs font-semibold text-white">{initials}</span>
+        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center shrink-0 ring-2 ring-accent/30 ring-offset-2 ring-offset-surface">
+          <span className="text-xs font-bold text-white">{initials}</span>
         </div>
 
         {/* Name + email */}
