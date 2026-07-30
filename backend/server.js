@@ -9,6 +9,7 @@ const onboardingRoutes = require('./src/routes/onboarding_routes');
 const profileRoutes = require('./src/routes/profile_routes');
 const sessionRoutes = require('./src/routes/session_routes');
 const adminRoutes = require('./src/routes/admin_routes');
+const { resetOrphanedSessions } = require('./src/services/session_service');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +30,13 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/admin', adminRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// On startup, reset any sessions stuck in streaming state from a previous crash.
+// NOTE: single-instance only — with multiple instances, use Redis TTL instead.
+async function start() {
+  await resetOrphanedSessions();
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+start();

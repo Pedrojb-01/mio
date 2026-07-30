@@ -100,6 +100,14 @@ async function unlockSession(sessionId) {
   });
 }
 
+async function resetOrphanedSessions() {
+  const { count } = await prisma.session.updateMany({
+    where: { isStreaming: true },
+    data:  { isStreaming: false }
+  });
+  if (count > 0) console.log(`[startup] Reset ${count} orphaned streaming session(s).`);
+}
+
 module.exports = {
   createSession,
   getSession,
@@ -109,5 +117,6 @@ module.exports = {
   touchSession,
   renameSession,
   lockSession,
-  unlockSession
+  unlockSession,
+  resetOrphanedSessions
 };
