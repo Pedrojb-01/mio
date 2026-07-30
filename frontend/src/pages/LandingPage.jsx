@@ -51,13 +51,13 @@ const FEATURES = [
     icon: <IconBrainstorm />,
     title: 'Brainstorm with context',
     description:
-      'Mio knows your niche, your audience and your brand — every idea it generates is tailored to your business, not a generic prompt.',
+      'Mio knows your niche, your audience and your brand. Every idea it generates is tailored to your business, not a generic prompt.',
   },
   {
     icon: <IconCreate />,
     title: 'Write in your voice',
     description:
-      'Define your tone once during setup. Every Instagram post Mio writes sounds like you — professional, casual, inspirational or whatever fits your brand.',
+      'Define your tone once during setup. Every Instagram post Mio writes sounds like you: professional, casual, inspirational or whatever fits your brand.',
   },
   {
     icon: <IconMemory />,
@@ -82,7 +82,7 @@ const CHAT_PREVIEW = [
   },
   {
     role: 'assistant',
-    content: `Here are 3 hooks for Studio Bloom's new collection:\n\n1. "Handmade doesn't mean ordinary — meet the pieces that prove it."\n2. "Every detail has a story. Here's ours."\n3. "Your next favorite piece is already made. You just haven't seen it yet."`,
+    content: `Here are 3 hooks for Studio Bloom's new collection:\n\n1. "Handmade doesn't mean ordinary. Meet the pieces that prove it."\n2. "Every detail has a story. Here's ours."\n3. "Your next favorite piece is already made. You just haven't seen it yet."`,
   },
 ]
 
@@ -154,7 +154,7 @@ function ChatPreview() {
           <div className="h-3 w-3 rounded-full bg-green-300" />
         </div>
         <div className="flex-1 flex justify-center">
-          <span className="text-xs text-muted font-medium">Mio — Brainstorm</span>
+          <span className="text-xs text-muted font-medium">Mio: Brainstorm</span>
         </div>
       </div>
 
@@ -323,7 +323,7 @@ export default function LandingPage() {
             <p className="text-base text-muted leading-relaxed mb-8">
               Mio is an AI content assistant that knows your business,
               remembers what you've already created, and helps you generate
-              ideas and write posts — in your tone, for your audience.
+              ideas and write posts that sound like you, for your audience.
             </p>
 
             {/* Differentiators */}
@@ -375,7 +375,7 @@ export default function LandingPage() {
               ChatGPT doesn't know your business.
             </h2>
             <p className="text-muted text-sm max-w-lg mx-auto">
-              Generic AI gives generic results. Mio is built around your brand —
+              Generic AI gives generic results. Mio is built around your brand,
               from the first setup to every session.
             </p>
           </div>
