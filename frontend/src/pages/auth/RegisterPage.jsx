@@ -138,7 +138,6 @@ export default function RegisterPage() {
                 value={fields.password}
                 onChange={handleChange}
                 error={errors.password}
-                placeholder="••••••••"
                 autoComplete="new-password"
                 maxLength={128}
                 hint="At least 8 characters"
@@ -151,7 +150,6 @@ export default function RegisterPage() {
                 value={fields.confirmPassword}
                 onChange={handleChange}
                 error={errors.confirmPassword}
-                placeholder="••••••••"
                 autoComplete="new-password"
                 maxLength={128}
                 required

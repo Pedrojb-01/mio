@@ -117,7 +117,6 @@ export default function LoginPage() {
                 value={fields.password}
                 onChange={handleChange}
                 error={errors.password}
-                placeholder="••••••••"
                 autoComplete="current-password"
                 maxLength={128}
                 required
