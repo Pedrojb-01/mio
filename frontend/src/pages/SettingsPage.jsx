@@ -124,7 +124,7 @@ export default function SettingsPage() {
               <span className="text-sm text-muted">1.0.0</span>
             </SettingRow>
             <SettingRow label="Built with" description="Stack and tools used.">
-              <span className="text-sm text-muted">React · Node.js · Groq</span>
+              <span className="text-sm text-muted">React · Node.js · PostgreSQL</span>
             </SettingRow>
           </Section>
 
