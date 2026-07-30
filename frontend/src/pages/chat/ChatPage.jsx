@@ -327,7 +327,7 @@ useEffect(() => {
             {!isLoadingHistory && messages.length === 0 && (
               <>
                 {/* Icon + title + description — centered */}
-                <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="flex flex-col items-center justify-center py-50 text-center">
                   <div className="h-12 w-12 rounded-2xl bg-soft flex items-center
                     justify-center mb-4">
                     <span className="text-xl">
