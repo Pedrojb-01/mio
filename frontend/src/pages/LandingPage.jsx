@@ -154,7 +154,7 @@ function ChatPreview() {
           <div className="h-3 w-3 rounded-full bg-green-300" />
         </div>
         <div className="flex-1 flex justify-center">
-          <span className="text-xs text-muted font-medium">Mio: Brainstorm</span>
+          <span className="text-xs text-muted font-medium">Mio — Brainstorm</span>
         </div>
       </div>
 
