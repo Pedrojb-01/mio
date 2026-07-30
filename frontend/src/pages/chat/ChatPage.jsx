@@ -155,7 +155,11 @@ export default function ChatPage() {
             }
           }, 2000)
         }
-      } catch {
+      } catch (err) {
+        if (err.status === 404 || err.status === 403) {
+          navigate('/dashboard/brainstorm', { replace: true, state: { toast: 'Session not found.' } })
+          return
+        }
         setError('Failed to load chat. Please go back and try again.')
       } finally {
         setIsLoadingHistory(false)

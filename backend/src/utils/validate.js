@@ -35,4 +35,11 @@ function validatePassword(value) {
   return null;
 }
 
-module.exports = { validateRequiredString, validateOptionalString, validateEmail, validatePassword };
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function validateUUID(value) {
+  if (!value || typeof value !== 'string') return false;
+  return UUID_PATTERN.test(value);
+}
+
+module.exports = { validateRequiredString, validateOptionalString, validateEmail, validatePassword, validateUUID };

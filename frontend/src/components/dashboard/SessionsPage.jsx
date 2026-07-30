@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import DashboardLayout from '../layout/DashboardLayout.jsx'
 import SessionCard from './SessionCard.jsx'
 import Button from '../ui/Button.jsx'
+import Toast from '../ui/Toast.jsx'
 import { sessionsApi } from '../../api/sessions.js'
 
 function IconPlus() {
@@ -37,11 +38,22 @@ function EmptyState({ mode, onCreate }) {
 
 export default function SessionsPage({ mode, title }) {
   const navigate                    = useNavigate()
+  const location                    = useLocation()
   const [sessions, setSessions]     = useState([])
   const [isLoading, setIsLoading]   = useState(true)
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError]           = useState(null)
   const [query, setQuery]           = useState('')
+  const [toast, setToast]           = useState(null)
+
+  // Show toast if redirected from ChatPage with an error state
+  useEffect(() => {
+    if (location.state?.toast) {
+      setToast(location.state.toast)
+      // Clear state from history so refreshing doesn't re-show the toast
+      window.history.replaceState({}, '')
+    }
+  }, [])
 
   useEffect(() => {
     async function fetchSessions() {
@@ -191,6 +203,13 @@ export default function SessionsPage({ mode, title }) {
         )}
 
       </div>
+    {toast && (
+        <Toast
+          message={toast}
+          type="error"
+          onClose={() => setToast(null)}
+        />
+      )}
     </DashboardLayout>
   )
 }

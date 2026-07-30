@@ -1,5 +1,6 @@
 const prisma = require('../utils/prisma');
 const AppError = require('../utils/app_error');
+const { validateUUID } = require('../utils/validate');
 
 // Create a new session
 async function createSession(userId, mode) {
@@ -15,6 +16,10 @@ async function createSession(userId, mode) {
 
 // Get session by id — verifies ownership
 async function getSession(sessionId, userId) {
+  if (!validateUUID(sessionId)) {
+    throw new AppError('Session not found', 404);
+  }
+
   const session = await prisma.session.findUnique({
     where: { id: sessionId }
   });
