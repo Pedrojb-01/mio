@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import DashboardLayout from '../components/layout/DashboardLayout.jsx'
@@ -67,7 +66,6 @@ export default function SettingsPage() {
 
   // UI-only for now — dark mode wiring comes later
   const { isDark, setIsDark } = useTheme()
-  const [emailNotifications, setEmailNotifications] = useState(true)
 
   return (
     <DashboardLayout>
@@ -101,16 +99,6 @@ export default function SettingsPage() {
             <SettingRow label="Email" description="Your login email address.">
               <span className="text-sm text-muted">{user?.email}</span>
             </SettingRow>
-
-            <SettingRow
-              label="Password"
-              description="Password recovery is coming soon."
-            >
-              <span className="text-xs text-muted bg-surface border border-border
-                px-2.5 py-1 rounded-lg">
-                Coming soon
-              </span>
-            </SettingRow>
           </Section>
 
           {/* Appearance */}
@@ -126,23 +114,6 @@ export default function SettingsPage() {
                 enabled={isDark}
                 onChange={setIsDark}
                 label="Toggle dark mode"
-              />
-            </SettingRow>
-          </Section>
-
-          {/* Notifications */}
-          <Section
-            title="Notifications"
-            description="Control what Mio sends you."
-          >
-            <SettingRow
-              label="Email notifications"
-              description="Receive updates and tips by email."
-            >
-              <Toggle
-                enabled={emailNotifications}
-                onChange={setEmailNotifications}
-                label="Toggle email notifications"
               />
             </SettingRow>
           </Section>
