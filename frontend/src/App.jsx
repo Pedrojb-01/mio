@@ -15,13 +15,44 @@ import ProfilePage     from './pages/ProfilePage.jsx'
 import SettingsPage    from './pages/SettingsPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
 
+// ─── Loader ──────────────────────────────────────────────────────────────────
+
+function AppLoader() {
+  return (
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-5">
+      <svg
+        width="56"
+        height="56"
+        viewBox="0 0 56 56"
+        fill="none"
+        aria-label="Loading"
+        className="animate-spin"
+      >
+        <circle
+          cx="28" cy="28" r="22"
+          stroke="currentColor"
+          strokeWidth="4"
+          className="text-border"
+        />
+        <path
+          d="M28 6 A22 22 0 0 1 50 28"
+          stroke="#800020"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </svg>
+      <p className="text-sm text-muted">Loading...</p>
+    </div>
+  )
+}
+
 // ─── Route Guards ────────────────────────────────────────────────────────────
 
 // Public routes: accessible only when NOT authenticated
 // If already logged in → go to dashboard
 function PublicRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth()
-  if (isLoading) return null
+  if (isLoading) return <AppLoader />
   if (isAuthenticated) return <Navigate to="/dashboard/brainstorm" replace />
   return children
 }
@@ -31,7 +62,7 @@ function PublicRoute({ children }) {
 // If logged in but onboarding not done → go to onboarding
 function PrivateRoute({ children }) {
   const { isAuthenticated, profile, isLoading } = useAuth()
-  if (isLoading) return null
+  if (isLoading) return <AppLoader />
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (!profile?.onboardingComplete) return <Navigate to="/onboarding" replace />
   return children
@@ -42,7 +73,7 @@ function PrivateRoute({ children }) {
 // If already completed onboarding → go to dashboard
 function OnboardingRoute({ children }) {
   const { isAuthenticated, profile, isLoading } = useAuth()
-  if (isLoading) return null
+  if (isLoading) return <AppLoader />
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (profile?.onboardingComplete) return <Navigate to="/dashboard/brainstorm" replace />
   return children
@@ -54,7 +85,7 @@ function OnboardingRoute({ children }) {
 // If logged in + onboarding but not admin → /dashboard/brainstorm
 function AdminRoute({ children }) {
   const { isAuthenticated, profile, user, isLoading } = useAuth()
-  if (isLoading) return null
+  if (isLoading) return <AppLoader />
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (!profile?.onboardingComplete) return <Navigate to="/onboarding" replace />
   if (user?.role !== 'admin') return <Navigate to="/dashboard/brainstorm" replace />
