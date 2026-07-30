@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { profileApi } from '../api/profile.js'
@@ -57,6 +57,18 @@ export default function ProfilePage() {
   const [serverError, setServerError] = useState(null)
   const [toast, setToast] = useState(null)
   const [isLoading, setIsLoading]     = useState(false)
+  const [shouldScrollToError, setShouldScrollToError] = useState(false)
+
+  // Scroll to first error field after React re-renders with new errors
+  useEffect(() => {
+    if (!shouldScrollToError) return
+    const firstError = document.querySelector('[aria-invalid="true"]')
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      firstError.focus()
+    }
+    setShouldScrollToError(false)
+  }, [shouldScrollToError, errors])
 
   const hasChanges = useMemo(() => (
     fields.name                !== (user?.name                    ?? '') ||
@@ -108,12 +120,7 @@ export default function ProfilePage() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!validate()) {
-      // Scroll to first error field
-      const firstError = document.querySelector('[aria-invalid="true"]')
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        firstError.focus()
-      }
+      setShouldScrollToError(true)
       return
     }
 
