@@ -212,7 +212,7 @@ function UserMenu({ user }) {
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user }               = useAuth()
   const [sessions, setSessions] = useState([])
   const location               = useLocation()
@@ -241,6 +241,11 @@ export default function Sidebar() {
     }
   }, [])
 
+  // Close sidebar on navigation (mobile)
+  useEffect(() => {
+    onClose()
+  }, [location.pathname])
+
   const navLinkClass = ({ isActive }) => `
     flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
     transition-colors duration-150
@@ -251,8 +256,12 @@ export default function Sidebar() {
   `
 
   return (
-    <aside className="w-60 shrink-0 h-screen sticky top-0 flex flex-col
-      border-r border-border bg-surface px-3 py-4">
+    <aside className={`
+      w-60 shrink-0 h-screen flex flex-col border-r border-border bg-surface px-3 py-4
+      fixed z-40 top-0 left-0 transition-transform duration-300
+      md:sticky md:translate-x-0
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}>
 
       {/* Logo */}
       <div className="px-3 mb-6">
