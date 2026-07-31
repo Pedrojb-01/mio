@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useTheme } from '../contexts/ThemeContext.jsx'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -271,6 +272,8 @@ function ThemeToggle() {
 // ─── LandingPage ─────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
+  const { isAuthenticated } = useAuth()
+
   return (
     <div className="min-h-screen bg-surface">
 
@@ -284,21 +287,34 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Link
-              to="/login"
-              className="text-sm font-medium text-muted hover:text-primary
-                transition-colors duration-150"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/register"
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm
-                font-medium bg-accent text-white hover:bg-accent-hover
-                transition-colors duration-150"
-            >
-              Get started
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard/brainstorm"
+                className="inline-flex items-center px-4 py-2 rounded-lg text-sm
+                  font-medium bg-accent text-white hover:bg-accent-hover
+                  transition-colors duration-150"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-muted hover:text-primary
+                    transition-colors duration-150"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center px-4 py-2 rounded-lg text-sm
+                    font-medium bg-accent text-white hover:bg-accent-hover
+                    transition-colors duration-150"
+                >
+                  Get started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -340,22 +356,35 @@ export default function LandingPage() {
             </ul>
 
             <div className="flex gap-3">
-              <Link
-                to="/register"
-                className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm
-                  font-medium bg-accent text-white hover:bg-accent-hover
-                  transition-colors duration-150"
-              >
-                Start for free
-              </Link>
-              <Link
-                to="/login"
-                className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm
-                  font-medium border border-border text-primary bg-surface
-                  hover:bg-surface transition-colors duration-150"
-              >
-                Sign in
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  to="/dashboard/brainstorm"
+                  className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm
+                    font-medium bg-accent text-white hover:bg-accent-hover
+                    transition-colors duration-150"
+                >
+                  Go to dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/register"
+                    className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm
+                      font-medium bg-accent text-white hover:bg-accent-hover
+                      transition-colors duration-150"
+                  >
+                    Start for free
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm
+                      font-medium border border-border text-primary bg-surface
+                      hover:bg-surface transition-colors duration-150"
+                  >
+                    Sign in
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -410,12 +439,12 @@ export default function LandingPage() {
           that sounds like you.
         </p>
         <Link
-          to="/register"
+          to={isAuthenticated ? '/dashboard/brainstorm' : '/register'}
           className="inline-flex items-center px-6 py-3 rounded-lg text-sm
             font-medium bg-accent text-white hover:bg-accent-hover
             transition-colors duration-150"
         >
-          Get started for free
+          {isAuthenticated ? 'Go to dashboard' : 'Get started for free'}
         </Link>
       </section>
 
