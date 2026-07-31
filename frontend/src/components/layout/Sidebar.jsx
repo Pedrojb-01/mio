@@ -256,10 +256,10 @@ export default function Sidebar() {
 
       {/* Logo */}
       <div className="px-3 mb-6">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 w-fit hover:opacity-80 transition-opacity duration-150">
           <img src="/favicon.svg" alt="Mio" className="h-7 w-7 rounded-lg" />
           <span className="text-xl font-semibold tracking-tight text-primary">mio</span>
-        </div>
+        </Link>
       </div>
 
       {/* Main nav */}

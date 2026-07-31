@@ -73,7 +73,7 @@ export default function LoginPage() {
       <header className="px-8 py-5 border-b border-border bg-surface">
         <Link
           to="/"
-          className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-150"
+          className="flex items-center gap-2.5 hover:opacity-80 transition-opacity duration-150 w-fit"
         >
           <img src="/favicon.svg" alt="Mio" className="h-8 w-8 rounded-xl" />
           <span className="text-lg font-semibold tracking-tight text-primary">mio</span>
