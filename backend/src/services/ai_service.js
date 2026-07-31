@@ -90,18 +90,24 @@ async function streamResponse(profile, mode, history, userMessage, res) {
 
 // Generate session title based on first exchange
 async function generateTitle(userMessage, aiResponse) {
-  const completion = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
-    messages: [
-      {
-        role: 'user',
-        content: `Based on this conversation exchange, generate a short and descriptive title (maximum 6 words) for this chat session. Return only the title, nothing else.
+
+  const completion = await Promise.race([
+    groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'user',
+          content: `Based on this conversation exchange, generate a short and descriptive title (maximum 6 words) for this chat session. Return only the title, nothing else.
 
 User: ${userMessage}
 Assistant: ${aiResponse}`
-      }
-    ]
-  });
+        }
+      ]
+    }),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Title generation timed out')), 8000)
+    )
+  ]);
 
   return completion.choices[0].message.content.trim();
 }
