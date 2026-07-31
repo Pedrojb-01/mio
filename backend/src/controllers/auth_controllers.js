@@ -34,11 +34,12 @@ async function loginController(req, res) {
 
     const { token, user } = await login(email, password);
 
+    const isProduction = process.env.NODE_ENV === 'production';
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'strict',
+      maxAge: 2 * 60 * 60 * 1000
     });
 
     return res.status(200).json({ message: 'Login successful', user });
@@ -55,10 +56,11 @@ async function logoutController(req, res) {
   try {
     logout();
 
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'strict'
     });
 
     return res.status(200).json({ message: 'Logout successful' });
