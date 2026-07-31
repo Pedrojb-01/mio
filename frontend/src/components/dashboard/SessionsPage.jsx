@@ -191,13 +191,18 @@ export default function SessionsPage({ mode, title }) {
 
         {!isLoading && filtered.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map(session => (
-              <SessionCard
+            {filtered.map((session, i) => (
+              <div
                 key={session.id}
-                session={session}
-                onDelete={handleDelete}
-                onRename={handleRename}
-              />
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${i * 50}ms`, animationFillMode: 'both' }}
+              >
+                <SessionCard
+                  session={session}
+                  onDelete={handleDelete}
+                  onRename={handleRename}
+                />
+              </div>
             ))}
           </div>
         )}
