@@ -42,7 +42,6 @@ export function validatePassword(password) {
 export function validateName(value) {
   const clean = sanitizeText(value)
   if (!clean)             return 'Name is required'
-  if (clean.length < 2)  return 'Name must be at least 2 characters'
   if (clean.length > 64) return 'Name is too long'
   return null
 }
