@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 import Toast from '../../components/ui/Toast.jsx'
@@ -43,6 +43,73 @@ const PERIODS = [
   { label: 'Last 30 days', value: '30d' },
   { label: 'All time',   value: 'all'   },
 ]
+
+function PeriodSelect({ value, options, onChange }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const current = options.find(o => o.value === value)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    function handleKey(e) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleKey)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [open])
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(prev => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="flex items-center gap-2 text-xs text-primary bg-surface border border-border
+          rounded-lg pl-3 pr-2.5 py-1.5 cursor-pointer"
+      >
+        {current?.label}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          className={`text-muted transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+          aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="absolute right-0 top-full mt-1 w-36 bg-surface border border-border
+            rounded-xl shadow-lg py-1 overflow-hidden z-10"
+        >
+          {options.map(o => (
+            <button
+              key={o.value}
+              type="button"
+              role="option"
+              aria-selected={o.value === value}
+              onClick={() => { onChange(o.value); setOpen(false) }}
+              className={`w-full px-4 py-2 text-xs text-left transition-colors duration-150
+                cursor-pointer hover:bg-soft
+                ${o.value === value ? 'text-accent font-medium' : 'text-primary'}`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function StatsTab() {
   const [stats, setStats]         = useState(null)
@@ -93,25 +160,7 @@ function StatsTab() {
             <p className="text-sm font-medium text-primary mb-1">New users</p>
             <p className="text-xs text-muted">{PERIODS.find(p => p.value === period)?.label}</p>
           </div>
-          <div className="relative">
-            <select
-              value={period}
-              onChange={e => setPeriod(e.target.value)}
-              className="text-xs text-primary bg-surface border border-border rounded-lg
-                pl-3 pr-8 py-1.5 outline-none cursor-pointer appearance-none"
-            >
-              {PERIODS.map(p => (
-                <option key={p.value} value={p.value}>{p.label}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                className="text-muted">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </div>
-          </div>
+          <PeriodSelect value={period} options={PERIODS} onChange={setPeriod} />
         </div>
         {stats.chartData.length === 0 ? (
           <div className="h-[180px] flex items-center justify-center">
@@ -207,7 +256,7 @@ function UserRow({ user, onStatusChange, onDelete, onPromote, isUpdating, isDele
     .join('')
 
   return (
-    <div className="flex items-center gap-4 py-4 border-b border-border last:border-0">
+    <div className="flex flex-wrap items-center gap-4 py-4 border-b border-border last:border-0">
       <div className="h-9 w-9 rounded-full bg-accent flex items-center justify-center shrink-0">
         <span className="text-xs font-semibold text-white">{initials}</span>
       </div>
@@ -231,7 +280,7 @@ function UserRow({ user, onStatusChange, onDelete, onPromote, isUpdating, isDele
         <p className="text-xs text-muted mt-0.5">Joined {getRelativeDate(user.createdAt)}</p>
       </div>
       {!isAdmin && (
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 w-full pl-[3.25rem] sm:w-auto sm:pl-0 sm:shrink-0">
           <Button
             variant="secondary"
             size="sm"
