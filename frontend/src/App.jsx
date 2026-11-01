@@ -19,7 +19,7 @@ import AdminPage from './pages/admin/AdminPage.jsx'
 
 function AppLoader() {
   return (
-    <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-5">
+    <div className="min-h-dvh bg-surface flex flex-col items-center justify-center gap-5">
       <svg
         width="56"
         height="56"

@@ -5,7 +5,7 @@ export default function NotFoundPage() {
   const { isAuthenticated } = useAuth()
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-4">
+    <div className="min-h-dvh bg-surface flex flex-col items-center justify-center px-4">
 
       {/* Logo */}
       <Link

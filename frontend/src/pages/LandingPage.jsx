@@ -275,7 +275,7 @@ export default function LandingPage() {
   const { isAuthenticated } = useAuth()
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-dvh bg-surface">
 
       {/* ── Navbar ── */}
       <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-sm

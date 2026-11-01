@@ -342,7 +342,7 @@ useEffect(() => {
 
   return (
     <DashboardLayout>
-      <div className="relative flex flex-col h-screen">
+      <div className="relative flex flex-col h-[calc(100dvh-57px)] md:h-dvh">
 
         {/* Header */}
         <header className="shrink-0 flex items-center gap-3 px-6 py-4
