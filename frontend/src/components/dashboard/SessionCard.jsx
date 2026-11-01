@@ -209,8 +209,9 @@ export default function SessionCard({ session, onDelete, onRename }) {
         <button
           onClick={() => setMenuOpen(prev => !prev)}
           aria-label="Session options"
-          className="p-1 rounded-md text-muted hover:text-primary hover:bg-surface
-            opacity-0 group-hover:opacity-100 transition-all duration-150 cursor-pointer"
+          className="p-2 rounded-md text-muted hover:text-primary hover:bg-surface
+            md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100
+            transition-all duration-150 cursor-pointer"
         >
           <IconDots />
         </button>
