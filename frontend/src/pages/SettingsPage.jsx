@@ -64,7 +64,6 @@ export default function SettingsPage() {
   const navigate      = useNavigate()
   const { user }      = useAuth()
 
-  // UI-only for now — dark mode wiring comes later
   const { isDark, setIsDark } = useTheme()
 
   return (

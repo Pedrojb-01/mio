@@ -46,11 +46,9 @@ export default function SessionsPage({ mode, title }) {
   const [query, setQuery]           = useState('')
   const [toast, setToast]           = useState(null)
 
-  // Show toast if redirected from ChatPage with an error state
   useEffect(() => {
     if (location.state?.toast) {
       setToast(location.state.toast)
-      // Clear state from history so refreshing doesn't re-show the toast
       window.history.replaceState({}, '')
     }
   }, [])
@@ -59,7 +57,6 @@ export default function SessionsPage({ mode, title }) {
     async function fetchSessions() {
       try {
         const data = await sessionsApi.list()
-        // Filter by mode — backend returns all sessions, we filter here
         setSessions(data.sessions.filter(s => s.mode === mode))
       } catch {
         setError('Failed to load sessions. Please refresh the page.')

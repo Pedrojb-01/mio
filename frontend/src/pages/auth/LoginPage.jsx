@@ -17,7 +17,6 @@ export default function LoginPage() {
   function handleChange(e) {
     const { name, value } = e.target
     setFields(prev => ({ ...prev, [name]: value }))
-    // Clear field error as user types
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
     if (serverError)  setServerError(null)
   }
@@ -47,9 +46,6 @@ export default function LoginPage() {
 
       const profile = await login(credentials)
 
-      // Backend returns profile after login:
-      // onboardingComplete = false → first time user → onboarding
-      // onboardingComplete = true  → returning user  → dashboard
       if (!profile?.onboardingComplete) {
         navigate('/onboarding', { replace: true })
       } else {
@@ -68,6 +64,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col">
+      <meta name="robots" content="noindex" />
 
       {/* Header */}
       <header className="px-8 py-5 border-b border-border bg-surface">

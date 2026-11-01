@@ -4,7 +4,6 @@ import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext.jsx'
 import { sessionsApi } from '../../api/sessions.js'
 
-// ─── Icons ───────────────────────────────────────────────────────────────────
 
 function IconBrainstorm() {
   return (
@@ -37,7 +36,6 @@ function IconChevron({ open }) {
   )
 }
 
-// ─── User dropdown ────────────────────────────────────────────────────────────
 
 function SignOutModal({ onConfirm, onCancel }) {
   useEffect(() => {
@@ -97,7 +95,6 @@ function UserMenu({ user, onClose }) {
   const [confirming, setConfirming] = useState(false)
   const menuRef           = useRef(null)
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -119,7 +116,6 @@ function UserMenu({ user, onClose }) {
     navigate('/', { replace: true })
   }
 
-  // Initials from user name: "Pedro Silva" → "PS"
   const initials = user.name
     .split(' ')
     .slice(0, 2)
@@ -210,7 +206,6 @@ function UserMenu({ user, onClose }) {
 }
 
 
-// ─── Sidebar ─────────────────────────────────────────────────────────────────
 
 export default function Sidebar({ isOpen, onClose }) {
   const { user }               = useAuth()
@@ -220,7 +215,6 @@ export default function Sidebar({ isOpen, onClose }) {
     ? location.pathname.split('/chat/')[1]
     : null
 
-  // Fetch recent sessions for the sidebar (last 5)
   useEffect(() => {
     async function fetchRecent() {
       try {

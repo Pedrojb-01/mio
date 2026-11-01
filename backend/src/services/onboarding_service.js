@@ -1,7 +1,6 @@
 const prisma = require('../utils/prisma');
 const AppError = require('../utils/app_error');
 
-// Complete onboarding by creating the user's profile
 async function completeOnboarding(userId, data) {
   const {
     businessName,
@@ -12,7 +11,6 @@ async function completeOnboarding(userId, data) {
     voiceTone
   } = data;
 
-  // Check if profile already exists
   const existingProfile = await prisma.profile.findUnique({
     where: { userId }
   });
@@ -21,7 +19,6 @@ async function completeOnboarding(userId, data) {
     throw new AppError('Onboarding already completed', 409);
   }
 
-  // Create profile with all onboarding data
   const profile = await prisma.profile.create({
     data: {
       userId,

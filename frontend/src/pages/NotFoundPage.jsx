@@ -6,6 +6,7 @@ export default function NotFoundPage() {
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col items-center justify-center px-4">
+      <meta name="robots" content="noindex" />
 
       {/* Logo */}
       <Link

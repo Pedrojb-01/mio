@@ -1,9 +1,3 @@
-// React escapes HTML by default in JSX — {variable} is already safe.
-// This file adds a second layer for two specific cases:
-//   1. Values sent to the API (strip tags before they reach the server)
-//   2. Any future use of dangerouslySetInnerHTML (chat markdown, etc.)
-
-// Strips HTML tags and trims whitespace
 export function sanitizeText(value) {
   if (typeof value !== 'string') return ''
   return value
@@ -12,16 +6,10 @@ export function sanitizeText(value) {
     .trim()
 }
 
-// Sanitize + enforce max length in one call
-// Used right before sending form data to the API
 export function sanitizeField(value, maxLength) {
   const clean = sanitizeText(value)
   return maxLength ? clean.slice(0, maxLength) : clean
 }
-
-// ─── Form validators ─────────────────────────────────────────────────────────
-// Each returns an error string if invalid, or null if valid.
-// Components call these before submitting — never trust the HTML maxLength alone.
 
 export function validateEmail(email) {
   const clean = sanitizeText(email)

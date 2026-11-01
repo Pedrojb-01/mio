@@ -1,7 +1,6 @@
 const prisma = require('../utils/prisma');
 const AppError = require('../utils/app_error');
 
-// Update user's profile
 async function updateProfile(userId, { name, ...profileData }) {
   const existingProfile = await prisma.profile.findUnique({
     where: { userId }
@@ -24,7 +23,6 @@ async function updateProfile(userId, { name, ...profileData }) {
   return updatedProfile;
 }
 
-// Get user and profile
 async function getProfileWithUser(userId) {
   const [user, profile] = await Promise.all([
     prisma.user.findUnique({

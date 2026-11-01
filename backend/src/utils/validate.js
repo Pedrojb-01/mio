@@ -1,6 +1,3 @@
-// Input validation helpers — mirrors frontend sanitize.js limits.
-// Each function returns an error message string, or null if valid.
-
 function validateRequiredString(value, fieldName, maxLength) {
   if (!value || typeof value !== 'string' || value.trim() === '') {
     return `${fieldName} is required`;

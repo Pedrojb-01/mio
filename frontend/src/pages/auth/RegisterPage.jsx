@@ -58,8 +58,6 @@ export default function RegisterPage() {
         password: sanitizeField(fields.password, 128),
       }
 
-      // register() creates account + auto-login, returns profile
-      // Profile is always null after register (onboarding not done yet)
       await register(userData)
       navigate('/onboarding', { replace: true })
     } catch (error) {
@@ -75,6 +73,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col">
+      <meta name="robots" content="noindex" />
 
       {/* Header */}
       <header className="px-8 py-5 border-b border-border bg-surface">

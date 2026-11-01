@@ -59,7 +59,6 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading]     = useState(false)
   const [shouldScrollToError, setShouldScrollToError] = useState(false)
 
-  // Scroll to first error field after React re-renders with new errors
   useEffect(() => {
     if (!shouldScrollToError) return
     const firstError = document.querySelector('[aria-invalid="true"]')
@@ -153,7 +152,6 @@ export default function ProfilePage() {
     }
   }
 
-  // Initials for avatar
   const initials = (user?.name ?? '')
     .split(' ')
     .slice(0, 2)

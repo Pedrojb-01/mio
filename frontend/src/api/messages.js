@@ -1,6 +1,6 @@
 import { api } from './client.js'
 
-// SSE streaming — can't use EventSource because it doesn't support
+// SSE streaming, can't use EventSource because it doesn't support
 // POST requests or cookies. We use fetch + ReadableStream instead.
 export function streamMessage({ sessionId, content, onChunk, onTitle, onDone, onError }) {
   const BASE_URL = import.meta.env.VITE_API_URL
@@ -46,7 +46,7 @@ export function streamMessage({ sessionId, content, onChunk, onTitle, onDone, on
           if (payload === '[DONE]') { onDone(); return }
           try {
             const parsed = JSON.parse(payload)
-            if (parsed.title) { onTitle(parsed.title); continue }  // ← continue, não return
+            if (parsed.title) { onTitle(parsed.title); continue }  
             if (parsed.text)  { onChunk(parsed.text);  continue } 
           } catch { /* malformed chunk — skip */ }
         }

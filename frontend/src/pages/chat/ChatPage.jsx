@@ -6,7 +6,6 @@ import { streamMessage } from '../../api/messages.js'
 import { sanitizeField } from '../../utils/sanitize.js'
 import DashboardLayout from '../../components/layout/DashboardLayout.jsx'
 
-// ─── Icons ───────────────────────────────────────────────────────────────────
 
 function IconBrainstorm() {
   return (
@@ -61,7 +60,6 @@ function IconSpinner() {
   )
 }
 
-// ─── Message bubble ───────────────────────────────────────────────────────────
 
 function MessageBubble({ role, content, isStreaming }) {
   const isUser   = role === 'user'
@@ -146,7 +144,6 @@ function MessageBubble({ role, content, isStreaming }) {
   )
 }
 
-// ─── ChatPage ─────────────────────────────────────────────────────────────────
 
 const SUGGESTIONS = {
   brainstorm: [
@@ -181,17 +178,15 @@ export default function ChatPage() {
 
   const prevIdRef = useRef(id)
 
-  // When id changes: save draft for previous session, restore for new one
   useEffect(() => {
     const prevId = prevIdRef.current
     if (prevId !== id) {
-      drafts.current[prevId] = input  // save current input under previous session
+      drafts.current[prevId] = input  
       prevIdRef.current = id
-      setInput(drafts.current[id] ?? '')  // restore draft for new session
+      setInput(drafts.current[id] ?? '')  
     }
   }, [id])
 
-  // ─── Load session + history ─────────────────────────────────────────────────
 
   useEffect(() => {
     async function loadChat() {
@@ -230,13 +225,11 @@ export default function ChatPage() {
     loadChat()
   }, [id])
 
-  // ─── Auto-scroll to bottom on new messages ──────────────────────────────────
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Auto-resize textarea as user types
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto'
@@ -244,14 +237,12 @@ export default function ChatPage() {
     }
   }, [input])
 
-  // Focus input on load and after streaming ends
   useEffect(() => {
     if (!isLoadingHistory && !isStreaming) {
       inputRef.current?.focus()
     }
   }, [isLoadingHistory, isStreaming, id])
 
-  // Show scroll to bottom button when user scrolls up
 useEffect(() => {
   const container = messagesContainerRef.current
   if (!container) return
@@ -265,7 +256,6 @@ useEffect(() => {
   return () => container.removeEventListener('scroll', handleScroll)
 }, [])
 
-  // ─── Send message ───────────────────────────────────────────────────────────
 
   const handleSend = useCallback(() => {
     const clean = sanitizeField(input, MAX_LENGTH).trim()
@@ -275,11 +265,9 @@ useEffect(() => {
     drafts.current[id] = ''
     setError(null)
 
-    // Optimistically add user message to UI
     const userMessage = { role: 'user', content: clean, id: `temp-${Date.now()}` }
     setMessages(prev => [...prev, userMessage])
 
-    // Placeholder for the assistant's streaming response
     const assistantPlaceholder = { role: 'assistant', content: '', id: `streaming-${Date.now()}` }
     setMessages(prev => [...prev, assistantPlaceholder])
 
@@ -289,7 +277,6 @@ useEffect(() => {
       sessionId: id,
       content:   clean,
       onChunk: (text) => {
-        // Append each chunk to the last message (the assistant placeholder)
         setMessages(prev => {
           const updated = [...prev]
           updated[updated.length - 1] = {
@@ -301,7 +288,6 @@ useEffect(() => {
       },
       onTitle: (title) => {
         setSession(prev => ({ ...prev, title }))
-        // Notify sidebar to refresh sessions
         window.dispatchEvent(new CustomEvent('session-title-updated'))
       },
       onDone: () => {
@@ -310,7 +296,6 @@ useEffect(() => {
         window.dispatchEvent(new CustomEvent('session-updated'))
       },
       onError: (message) => {
-        // Remove the empty assistant placeholder on error
         setMessages(prev => prev.filter(m => !m.id?.startsWith('streaming-')))
         setError(message)
         setIsStreaming(false)
@@ -319,7 +304,6 @@ useEffect(() => {
     })
   }, [input, isStreaming, id])
 
-  // Send on Enter (Shift+Enter = new line)
   function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -327,7 +311,6 @@ useEffect(() => {
     }
   }
 
-  // ─── Back navigation ────────────────────────────────────────────────────────
 
   function handleBack() {
     const route = session?.mode === 'brainstorm'
@@ -338,7 +321,6 @@ useEffect(() => {
 
   const canSend = input.trim().length > 0 && !isStreaming
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <DashboardLayout>

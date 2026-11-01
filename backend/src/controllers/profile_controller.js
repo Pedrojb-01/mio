@@ -16,7 +16,6 @@ async function updateProfileController(req, res) {
       voiceTone
     } = req.body;
 
-    // Build update object with only provided fields
     const data = {};
     if (name !== undefined) data.name = name;
     if (businessName !== undefined) data.businessName = businessName;
@@ -26,7 +25,6 @@ async function updateProfileController(req, res) {
     if (targetAudience !== undefined) data.targetAudience = targetAudience;
     if (voiceTone !== undefined) data.voiceTone = voiceTone;
 
-    // Validate fields that were provided
     if (data.name !== undefined) {
       const err = validateRequiredString(data.name, 'Name', 64);
       if (err) return res.status(400).json({ message: err });
@@ -52,12 +50,10 @@ async function updateProfileController(req, res) {
       if (err) return res.status(400).json({ message: err });
     }
 
-    // Validate voiceTone enum
     if (data.voiceTone && !VALID_VOICE_TONES.includes(data.voiceTone)) {
       return res.status(400).json({ message: 'Invalid voice tone' });
     }
 
-    // Nothing to update
     if (Object.keys(data).length === 0) {
       return res.status(400).json({ message: 'No fields provided for update' });
     }

@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
 
   // On every page load/refresh: check if the cookie is still valid
   // If yes → restore user state. If no → stays null → redirects to /login
+  // isLoading stays true until this finishes, so guards don't redirect too early
   useEffect(() => {
     async function restore() {
       try {
@@ -43,7 +44,6 @@ export function AuthProvider({ children }) {
 
   async function login(credentials) {
     await api.post('/auth/login', credentials)
-    // Login only sets the cookie — fetch profile to get user data
     const data = await api.get('/profile')
     setUser({ id: data.id, name: data.name, email: data.email, role: data.role })
     setProfile(data.profile)
@@ -52,7 +52,6 @@ export function AuthProvider({ children }) {
 
   async function register(userData) {
     await api.post('/auth/register', userData)
-    // Auto-login after register so the user lands on onboarding already authenticated
     return login({ email: userData.email, password: userData.password })
   }
 
@@ -62,7 +61,6 @@ export function AuthProvider({ children }) {
     setProfile(null)
   }
 
-  // Called after onboarding or profile update to keep state in sync
   function updateProfile(updates) {
     setProfile(prev => ({ ...prev, ...updates }))
   }

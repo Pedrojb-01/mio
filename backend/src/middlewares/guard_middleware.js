@@ -11,7 +11,6 @@ async function guard(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Verify user still exists and is not blocked
     const user = await prisma.user.findUnique({
       where: { id: decoded.id }
     });

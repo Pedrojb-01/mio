@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext.jsx'
 import { ThemeProvider } from './contexts/ThemeContext.jsx'
 
-// Pages 
 import LandingPage     from './pages/LandingPage.jsx'
 import NotFoundPage    from './pages/NotFoundPage.jsx'
 import LoginPage       from './pages/auth/LoginPage.jsx'
@@ -15,7 +14,6 @@ import ProfilePage     from './pages/ProfilePage.jsx'
 import SettingsPage    from './pages/SettingsPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
 
-// ─── Loader ──────────────────────────────────────────────────────────────────
 
 function AppLoader() {
   return (
@@ -46,10 +44,7 @@ function AppLoader() {
   )
 }
 
-// ─── Route Guards ────────────────────────────────────────────────────────────
 
-// Public routes: accessible only when NOT authenticated
-// If already logged in → go to dashboard
 function PublicRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth()
   if (isLoading) return <AppLoader />
@@ -57,9 +52,6 @@ function PublicRoute({ children }) {
   return children
 }
 
-// Private routes: accessible only when authenticated + onboarding complete
-// If not logged in → go to login
-// If logged in but onboarding not done → go to onboarding
 function PrivateRoute({ children }) {
   const { isAuthenticated, profile, isLoading } = useAuth()
   if (isLoading) return <AppLoader />
@@ -68,9 +60,6 @@ function PrivateRoute({ children }) {
   return children
 }
 
-// Onboarding route: only for authenticated users who haven't completed onboarding
-// If not logged in → go to login
-// If already completed onboarding → go to dashboard
 function OnboardingRoute({ children }) {
   const { isAuthenticated, profile, isLoading } = useAuth()
   if (isLoading) return <AppLoader />
@@ -79,10 +68,6 @@ function OnboardingRoute({ children }) {
   return children
 }
 
-// Admin route: only for authenticated users with role 'admin'
-// If not logged in → /login
-// If logged in but no onboarding → /onboarding
-// If logged in + onboarding but not admin → /dashboard/brainstorm
 function AdminRoute({ children }) {
   const { isAuthenticated, profile, user, isLoading } = useAuth()
   if (isLoading) return <AppLoader />
@@ -92,9 +77,6 @@ function AdminRoute({ children }) {
   return children
 }
 
-// ─── Routes ──────────────────────────────────────────
-
-// ─── Routes ──────────────────────────────────────────────────────────────────
 
 function AppRoutes() {
   return (
@@ -122,7 +104,6 @@ function AppRoutes() {
   )
 }
 
-// ─── App ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
   return (

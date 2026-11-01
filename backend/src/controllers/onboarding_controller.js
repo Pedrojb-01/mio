@@ -15,13 +15,11 @@ async function completeOnboardingController(req, res) {
       voiceTone
     } = req.body;
 
-    // Validate required fields
     const businessNameError = validateRequiredString(businessName, 'Business name', 64);
     const nicheError        = validateRequiredString(niche,         'Niche',         64);
     if (businessNameError) return res.status(400).json({ message: businessNameError });
     if (nicheError)        return res.status(400).json({ message: nicheError });
 
-    // Validate optional text fields
     const descError   = validateOptionalString(businessDescription, 'Business description', 500);
     const diffError   = validateOptionalString(differentiators,     'Differentiators',      500);
     const audError    = validateOptionalString(targetAudience,      'Target audience',      500);
@@ -29,7 +27,6 @@ async function completeOnboardingController(req, res) {
     if (diffError)  return res.status(400).json({ message: diffError });
     if (audError)   return res.status(400).json({ message: audError });
 
-    // Validate voiceTone enum
     if (voiceTone && !VALID_VOICE_TONES.includes(voiceTone)) {
       return res.status(400).json({ message: 'Invalid voice tone' });
     }

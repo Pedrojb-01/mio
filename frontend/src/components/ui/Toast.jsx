@@ -4,13 +4,10 @@ export default function Toast({ message, type = 'success', onClose }) {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    // Trigger enter animation
     const enterTimer = setTimeout(() => setVisible(true), 10)
 
-    // Start exit after 3s
     const exitTimer = setTimeout(() => {
       setVisible(false)
-      // Wait for animation to finish before unmounting
       setTimeout(onClose, 300)
     }, 3000)
 

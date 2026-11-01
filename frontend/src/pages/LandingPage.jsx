@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useTheme } from '../contexts/ThemeContext.jsx'
 import { useAuth } from '../contexts/AuthContext.jsx'
 
-// ─── Icons ───────────────────────────────────────────────────────────────────
 
 function IconBrainstorm() {
   return (
@@ -45,7 +44,6 @@ function IconCheck() {
   )
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
 
 const FEATURES = [
   {
@@ -87,14 +85,13 @@ const CHAT_PREVIEW = [
   },
 ]
 
-// ─── Components ──────────────────────────────────────────────────────────────
 
-const TYPING_SPEED    = 50   // ms per character
-const PAUSE_AFTER_USER = 800  // ms before AI starts typing
-const PAUSE_DOTS       = 1200 // ms showing typing dots
+const TYPING_SPEED    = 50   
+const PAUSE_AFTER_USER = 800  
+const PAUSE_DOTS       = 1200
 
 function ChatPreview() {
-  const [phase, setPhase]         = useState('idle')    // idle | user | dots | ai | done
+  const [phase, setPhase]         = useState('idle')  
   const [userText, setUserText]   = useState('')
   const [aiText, setAiText]       = useState('')
 
@@ -106,7 +103,6 @@ function ChatPreview() {
     let interval
     let index = 0
 
-    // Phase 1: type user message
     setPhase('user')
     setUserText('')
     setAiText('')
@@ -117,11 +113,9 @@ function ChatPreview() {
       if (index >= fullUser.length) {
         clearInterval(interval)
 
-        // Phase 2: show dots
         timeout = setTimeout(() => {
           setPhase('dots')
 
-          // Phase 3: type AI response
           timeout = setTimeout(() => {
             setPhase('ai')
             index = 0
@@ -269,13 +263,13 @@ function ThemeToggle() {
   )
 }
 
-// ─── LandingPage ─────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuth()
 
   return (
     <div className="min-h-dvh bg-surface">
+      <link rel="canonical" href="https://mio-l8hy.onrender.com/" />
 
       {/* ── Navbar ── */}
       <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-sm

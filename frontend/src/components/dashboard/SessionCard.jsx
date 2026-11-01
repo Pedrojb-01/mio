@@ -32,7 +32,6 @@ function getRelativeDate(dateString) {
 }
 
 function ConfirmModal({ title, onConfirm, onCancel, isLoading }) {
-  // Close on Escape
   useEffect(() => {
     function handleKey(e) {
       if (e.key === 'Escape') onCancel()
@@ -100,7 +99,6 @@ export default function SessionCard({ session, onDelete, onRename }) {
   const menuRef                       = useRef(null)
   const inputRef                      = useRef(null)
 
-  // Close menu on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
@@ -109,7 +107,6 @@ export default function SessionCard({ session, onDelete, onRename }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
-  // Focus input when rename starts
   useEffect(() => {
     if (renaming) inputRef.current?.focus()
   }, [renaming])

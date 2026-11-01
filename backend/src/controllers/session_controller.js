@@ -5,7 +5,6 @@ const { streamResponse, generateTitle } = require('../services/ai_service');
 
 const VALID_MODES = ['brainstorm', 'creation'];
 
-// Send a message — creates session if it doesn't exist
 async function sendMessageController(req, res) {
   const userId = req.user.id;
   const { message, mode } = req.body;
@@ -19,7 +18,6 @@ async function sendMessageController(req, res) {
     return res.status(400).json({ message: 'Message must be at most 2000 characters' });
   }
 
-  // Fetch profile and verify onboarding is complete
   let profile;
   try {
     const data = await getProfileWithUser(userId);
@@ -42,7 +40,6 @@ async function sendMessageController(req, res) {
     }
     session = await getSession(sessionId, userId);
 
-    // Validate mode if provided — session.mode takes precedence
     if (mode && !VALID_MODES.includes(mode)) {
       return res.status(400).json({ message: 'Mode must be brainstorm or creation' });
     }
@@ -82,7 +79,7 @@ async function sendMessageController(req, res) {
         await updateSessionTitle(session.id, title)
         res.write(`data: ${JSON.stringify({ title })}\n\n`)
       } catch {
-        // Title generation failed — session stays as "Untitled session", non-fatal
+        // Title generation failed — session stays as "Untitled session", non-fatal because the user can rename it
       }
     }
 
@@ -101,7 +98,6 @@ async function sendMessageController(req, res) {
   }
 }
 
-// List all sessions
 async function listSessionsController(req, res) {
   try {
     const sessions = await listSessions(req.user.id);
@@ -111,7 +107,6 @@ async function listSessionsController(req, res) {
   }
 }
 
-// Get session with messages
 async function getSessionController(req, res) {
   try {
     const session = await getSession(req.params.id, req.user.id);
@@ -125,7 +120,6 @@ async function getSessionController(req, res) {
   }
 }
 
-// Delete session
 async function deleteSessionController(req, res) {
   try {
     await deleteSession(req.params.id, req.user.id);
@@ -138,7 +132,6 @@ async function deleteSessionController(req, res) {
   }
 }
 
-// Rename session
 async function renameSessionController(req, res) {
   try {
     const { title } = req.body;
@@ -155,7 +148,6 @@ async function renameSessionController(req, res) {
   }
 }
 
-// Create session explicitly
 async function createSessionController(req, res) {
   try {
     const userId = req.user.id;

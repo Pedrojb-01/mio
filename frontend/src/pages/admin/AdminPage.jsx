@@ -9,7 +9,6 @@ import {
   Tooltip, ResponsiveContainer
 } from 'recharts'
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getRelativeDate(dateString) {
   const now      = new Date()
@@ -24,7 +23,6 @@ function getRelativeDate(dateString) {
   return `${Math.floor(diffDays / 365)} years ago`
 }
 
-// ─── Stat card ────────────────────────────────────────────────────────────────
 
 function StatCard({ label, value }) {
   return (
@@ -35,7 +33,6 @@ function StatCard({ label, value }) {
   )
 }
 
-// ─── Stats tab ────────────────────────────────────────────────────────────────
 
 const PERIODS = [
   { label: 'Today',      value: 'today' },
@@ -243,7 +240,6 @@ function StatsTab() {
   )
 }
 
-// ─── Users tab ────────────────────────────────────────────────────────────────
 
 function UserRow({ user, onStatusChange, onDelete, onPromote, isUpdating, isDeleting, isPromoting }) {
   const isAdmin   = user.role === 'admin'
@@ -574,7 +570,6 @@ async function handlePromote(userId) {
   )
 }
 
-// ─── AdminPage ────────────────────────────────────────────────────────────────
 
 const TABS = ['Users', 'Stats']
 

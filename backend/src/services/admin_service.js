@@ -1,7 +1,6 @@
 const prisma = require('../utils/prisma');
 const AppError = require('../utils/app_error');
 
-// List all users
 async function listUsers() {
   const users = await prisma.user.findMany({
     select: {
@@ -18,7 +17,6 @@ async function listUsers() {
   return users;
 }
 
-// Block or unblock a user
 async function updateUserStatus(userId, status) {
   const user = await prisma.user.findUnique({
     where: { id: userId }
@@ -47,11 +45,9 @@ async function updateUserStatus(userId, status) {
   return updatedUser;
 }
 
-// Get platform stats
 async function getStats(period = '7d') {
   const now = new Date()
 
-  // Build the date window and grouping strategy based on period
   let since = null
   let groupByMonth = false
 
@@ -67,7 +63,6 @@ async function getStats(period = '7d') {
     since.setDate(since.getDate() - 29)
     since.setHours(0, 0, 0, 0)
   } else {
-    // all — group by month
     groupByMonth = true
   }
 
@@ -100,13 +95,11 @@ async function getStats(period = '7d') {
   let chartData = []
 
   if (groupByMonth) {
-    // Find the earliest user (including admin) to use as chart start anchor
     const firstUser = await prisma.user.findFirst({
       orderBy: { createdAt: 'asc' },
       select: { createdAt: true },
     })
 
-    // Build month map from first user's month up to current month
     const monthMap = {}
     if (firstUser) {
       const start = new Date(firstUser.createdAt)
@@ -120,7 +113,6 @@ async function getStats(period = '7d') {
       }
     }
 
-    // Count only role: 'user' per month
     for (const u of newUsersRaw) {
       const label = new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
       if (label in monthMap) monthMap[label]++
@@ -128,7 +120,6 @@ async function getStats(period = '7d') {
 
     chartData = Object.entries(monthMap).map(([day, count]) => ({ day, count }))
   } else if (period === 'today') {
-    // Group by hour (0h, 1h, … 23h)
     const hourMap = {}
     for (let h = 0; h < 24; h++) {
       hourMap[`${h}h`] = 0
@@ -139,7 +130,6 @@ async function getStats(period = '7d') {
     }
     chartData = Object.entries(hourMap).map(([day, count]) => ({ day, count }))
   } else {
-    // Group by day — 7d or 30d
     const days = period === '7d' ? 7 : 30
     const dayMap = {}
     for (let i = days - 1; i >= 0; i--) {
@@ -163,7 +153,6 @@ async function getStats(period = '7d') {
   }
 }
 
-// Delete a user
 async function deleteUser(userId, requestingAdminId) {
   if (userId === requestingAdminId) {
     throw new AppError('You cannot delete your own account', 403)
@@ -182,7 +171,6 @@ async function deleteUser(userId, requestingAdminId) {
   await prisma.user.delete({ where: { id: userId } })
 }
 
-// Promote a user to admin
 async function promoteUser(userId, requestingAdminId) {
   if (userId === requestingAdminId) {
     throw new AppError('You cannot change your own role', 403)

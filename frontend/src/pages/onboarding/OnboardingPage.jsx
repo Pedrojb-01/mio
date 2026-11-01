@@ -73,7 +73,6 @@ export default function OnboardingPage() {
     if (errors.voiceTone) setErrors(prev => ({ ...prev, voiceTone: null }))
   }
 
-  // ─── Validate current step before advancing ────────────────────────────────
 
   function validateStep(current) {
     const next = {}
@@ -116,7 +115,6 @@ export default function OnboardingPage() {
     setStep(prev => prev - 1)
   }
 
-  // ─── Submit all fields at once ─────────────────────────────────────────────
 
   async function handleSubmit() {
     if (!validateStep(3)) return
@@ -148,7 +146,6 @@ export default function OnboardingPage() {
     }
   }
 
-  // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-dvh bg-surface flex items-center justify-center px-4 py-12">
