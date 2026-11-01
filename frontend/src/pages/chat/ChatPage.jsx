@@ -369,7 +369,7 @@ useEffect(() => {
 
         {/* Messages area */}
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="max-w-2xl mx-auto flex flex-col gap-4">
+          <div className="max-w-2xl mx-auto flex flex-col gap-4 min-h-full">
 
             {/* Loading history */}
             {isLoadingHistory && (
@@ -390,7 +390,7 @@ useEffect(() => {
             {!isLoadingHistory && messages.length === 0 && (
               <>
                 {/* Icon + title + description — centered */}
-                <div className="flex flex-col items-center justify-center py-50 text-center">
+                <div className="flex flex-col items-center justify-center my-auto text-center">
                   <div className="h-12 w-12 rounded-2xl bg-soft flex items-center
                     justify-center mb-4">
                     <span className="text-xl">

@@ -90,7 +90,7 @@ function SignOutModal({ onConfirm, onCancel }) {
   )
 }
 
-function UserMenu({ user }) {
+function UserMenu({ user, onClose }) {
   const { logout }       = useAuth()
   const navigate          = useNavigate()
   const [open, setOpen]           = useState(false)
@@ -159,7 +159,7 @@ function UserMenu({ user }) {
           <Link
             to="/profile"
             role="menuitem"
-            onClick={() => setOpen(false)}
+            onClick={() => { setOpen(false); onClose() }}
             className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-primary
               hover:bg-surface transition-colors duration-150"
           >
@@ -168,7 +168,7 @@ function UserMenu({ user }) {
           <Link
             to="/settings"
             role="menuitem"
-            onClick={() => setOpen(false)}
+            onClick={() => { setOpen(false); onClose() }}
             className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-primary
               hover:bg-surface transition-colors duration-150"
           >
@@ -180,7 +180,7 @@ function UserMenu({ user }) {
               <Link
                 to="/admin"
                 role="menuitem"
-                onClick={() => setOpen(false)}
+                onClick={() => { setOpen(false); onClose() }}
                 className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-accent
                   hover:bg-soft transition-colors duration-150"
               >
@@ -273,11 +273,11 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Main nav */}
       <nav className="flex flex-col gap-1" aria-label="Main navigation">
-        <NavLink to="/dashboard/brainstorm" className={navLinkClass}>
+        <NavLink to="/dashboard/brainstorm" className={navLinkClass} onClick={onClose}>
           <IconBrainstorm />
           Brainstorm
         </NavLink>
-        <NavLink to="/dashboard/create" className={navLinkClass}>
+        <NavLink to="/dashboard/create" className={navLinkClass} onClick={onClose}>
           <IconCreate />
           Create Post
         </NavLink>
@@ -294,6 +294,7 @@ export default function Sidebar({ isOpen, onClose }) {
               <Link
                 key={session.id}
                 to={`/chat/${session.id}`}
+                onClick={onClose}
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
                   transition-colors duration-150
                   ${activeChatId === session.id
@@ -315,7 +316,7 @@ export default function Sidebar({ isOpen, onClose }) {
       <div className="flex-1" />
 
       {/* User menu at the bottom */}
-      {user && <UserMenu user={user} />}
+      {user && <UserMenu user={user} onClose={onClose} />}
     </aside>
   )
 }
