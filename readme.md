@@ -58,7 +58,7 @@ Backend (Node.js + Express)
     ├── System prompt construction (server-side only)
     │
     ▼
-Groq API (llama-3.3-70b-versatile)
+Groq API (openai/gpt-oss-120b)
     │
     ▼ SSE stream
 Backend → Frontend (real-time token streaming)
@@ -82,7 +82,7 @@ PostgreSQL (Neon) — users, profiles, sessions, messages
 | Frontend | React 19, Tailwind CSS v4, Vite, React Router, Recharts |
 | Backend | Node.js, Express, Prisma v5 ORM |
 | Database | PostgreSQL (Neon) |
-| AI | Groq API — llama-3.3-70b-versatile |
+| AI | Groq API — openai/gpt-oss-120b |
 | Auth | JWT (HttpOnly cookies), Argon2 |
 | Hosting | Render (Web Service + Static Site) |
 

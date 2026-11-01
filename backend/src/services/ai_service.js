@@ -61,7 +61,7 @@ async function streamResponse(profile, mode, history, userMessage, res) {
   while (attempt < maxAttempts) {
     try {
       const stream = await groq.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages: [
           { role: 'system', content: systemPrompt },
           ...formattedHistory,
@@ -93,7 +93,7 @@ async function generateTitle(userMessage, aiResponse) {
 
   const completion = await Promise.race([
     groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: [
         {
           role: 'user',
