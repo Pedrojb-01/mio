@@ -1,4 +1,5 @@
 const Groq = require('groq-sdk');
+const GROQ_MODEL = process.env.GROQ_MODEL;
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -61,7 +62,7 @@ async function streamResponse(profile, mode, history, userMessage, res) {
   while (attempt < maxAttempts) {
     try {
       const stream = await groq.chat.completions.create({
-        model: 'openai/gpt-oss-120b',
+        model: GROQ_MODEL,
         messages: [
           { role: 'system', content: systemPrompt },
           ...formattedHistory,
@@ -93,7 +94,7 @@ async function generateTitle(userMessage, aiResponse) {
 
   const completion = await Promise.race([
     groq.chat.completions.create({
-      model: 'openai/gpt-oss-120b',
+      model: GROQ_MODEL,
       messages: [
         {
           role: 'user',

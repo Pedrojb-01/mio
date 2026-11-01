@@ -171,7 +171,10 @@ PEPPER=your_random_hex_string
 JWT_SECRET=your_random_hex_string
 NODE_ENV=development
 GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=your_groq_model_here
 ```
+
+The model is configurable through `GROQ_MODEL` (e.g. `openai/gpt-oss-120b`), so it can be swapped without code changes.
 
 ### Frontend
 
