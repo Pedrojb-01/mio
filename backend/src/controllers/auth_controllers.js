@@ -28,7 +28,6 @@ async function registerController(req, res) {
 
 async function loginController(req, res) {
   try {
-    console.log(JSON.stringify({ ip: req.ip, xff: req.headers['x-forwarded-for'] }));
     const { email, password } = req.body;
 
     if (!email || !password) {
