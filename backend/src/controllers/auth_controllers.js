@@ -1,5 +1,6 @@
 const { register, login, logout } = require('../services/auth_service');
 const { validateRequiredString, validateEmail, validatePassword } = require('../utils/validate');
+const { logError } = require('../utils/logger');
 
 async function registerController(req, res) {
   try {
@@ -20,6 +21,7 @@ async function registerController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('auth.register', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -48,6 +50,7 @@ async function loginController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('auth.login', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -65,7 +68,8 @@ async function logoutController(req, res) {
 
     return res.status(200).json({ message: 'Logout successful' });
 
-  } catch {
+  } catch (error){
+    logError('auth.logout', error);
     return res.status(500).json({ message: 'Internal server error' })
   }
 }

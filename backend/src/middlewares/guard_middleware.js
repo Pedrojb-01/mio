@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../utils/prisma');
+const { logError } = require('../utils/logger');
 
 async function guard(req, res, next) {
   const token = req.cookies.token;
@@ -8,9 +9,14 @@ async function guard(req, res, next) {
     return res.status(401).json({ message: 'Authentication required' });
   }
 
+  let decoded;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+
+  try {
     const user = await prisma.user.findUnique({
       where: { id: decoded.id }
     });
@@ -21,8 +27,9 @@ async function guard(req, res, next) {
 
     req.user = decoded;
     next();
-  } catch {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+  } catch (error) {
+    logError('auth.guard', error, { userId: decoded.id });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

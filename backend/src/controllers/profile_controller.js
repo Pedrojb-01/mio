@@ -1,5 +1,6 @@
 const { getProfileWithUser, updateProfile } = require('../services/profile_service');
 const { validateRequiredString, validateOptionalString } = require('../utils/validate');
+const { logError } = require('../utils/logger');
 
 const VALID_VOICE_TONES = ['professional', 'casual', 'inspirational', 'educational', 'humorous'];
 
@@ -65,6 +66,7 @@ async function updateProfileController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('profile.update', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -78,6 +80,7 @@ async function getProfileController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('profile.get', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }

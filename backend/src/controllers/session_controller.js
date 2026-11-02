@@ -2,6 +2,7 @@ const { createSession, getSession, listSessions, deleteSession, renameSession, u
 const { saveMessage, getSessionMessages } = require('../services/message_service');
 const { getProfileWithUser } = require('../services/profile_service');
 const { streamResponse, generateTitle } = require('../services/ai_service');
+const { logError, logWarn } = require('../utils/logger');
 
 const VALID_MODES = ['brainstorm', 'creation'];
 
@@ -9,7 +10,6 @@ async function sendMessageController(req, res) {
   const userId = req.user.id;
   const { message, mode } = req.body;
   const sessionId = req.params.id;
-
 
   if (!message || typeof message !== 'string' || message.trim() === '') {
     return res.status(400).json({ message: 'Message cannot be empty' });
@@ -26,6 +26,7 @@ async function sendMessageController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('message.profile', error, { userId, sessionId });
     return res.status(500).json({ message: 'Internal server error' });
   }
 
@@ -47,6 +48,7 @@ async function sendMessageController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('message.session', error, { userId, sessionId });
     return res.status(500).json({ message: 'Internal server error' });
   }
 
@@ -54,7 +56,12 @@ async function sendMessageController(req, res) {
     return res.status(409).json({ message: 'Session is already processing a message' });
   }
 
-  await lockSession(session.id);
+  try {
+    await lockSession(session.id);
+  } catch (error) {
+    logError('message.lock', error, { userId, sessionId: session.id });
+    return res.status(500).json({ message: 'Failed to process message' });
+  }
 
   try {
     const history = await getSessionMessages(session.id);
@@ -78,8 +85,9 @@ async function sendMessageController(req, res) {
         const title = await generateTitle(message.trim(), fullResponse)
         await updateSessionTitle(session.id, title)
         res.write(`data: ${JSON.stringify({ title })}\n\n`)
-      } catch {
+      } catch (error) {
         // Title generation failed — session stays as "Untitled session", non-fatal because the user can rename it
+        logWarn('message.title', error, { userId, sessionId: session.id });
       }
     }
 
@@ -87,6 +95,7 @@ async function sendMessageController(req, res) {
     res.end()
 
   } catch (error) {
+    logError('message.stream', error, { userId, sessionId: session.id, headersSent: res.headersSent });
     if (res.headersSent) {
       res.write(`data: ${JSON.stringify({ error: 'Stream failed' })}\n\n`);
       res.end();
@@ -94,7 +103,11 @@ async function sendMessageController(req, res) {
       res.status(500).json({ message: 'Failed to process message' });
     }
   } finally {
-    await unlockSession(session.id);
+    try {
+      await unlockSession(session.id);
+    } catch (error) {
+      logError('message.unlock', error, { userId, sessionId: session.id });
+    }
   }
 }
 
@@ -102,7 +115,8 @@ async function listSessionsController(req, res) {
   try {
     const sessions = await listSessions(req.user.id);
     return res.status(200).json({ sessions });
-  } catch {
+  } catch (error) {
+    logError('session.list', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -116,6 +130,7 @@ async function getSessionController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('session.get', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -128,6 +143,7 @@ async function deleteSessionController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('session.delete', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -144,6 +160,7 @@ async function renameSessionController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('session.rename', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -163,6 +180,7 @@ async function createSessionController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('session.create', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }

@@ -1,4 +1,5 @@
 const { listUsers, updateUserStatus, getStats, deleteUser, promoteUser } = require('../services/admin_service');
+const { logError } = require('../utils/logger');
 
 const VALID_STATUSES = ['active', 'blocked'];
 
@@ -6,7 +7,8 @@ async function listUsersController(req, res) {
   try {
     const users = await listUsers();
     return res.status(200).json({ users });
-  } catch {
+  } catch (error){
+    logError('admin.listUsers', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -27,6 +29,7 @@ async function updateUserStatusController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('admin.updateUserStatus', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -41,6 +44,7 @@ async function getStatsController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('admin.getStats', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
@@ -53,6 +57,7 @@ async function deleteUserController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('admin.deleteUser', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
@@ -65,6 +70,7 @@ async function promoteUserController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('admin.promoteUser', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' })
   }
 }

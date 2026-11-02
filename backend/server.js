@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const { logError } = require('./src/utils/logger');
 
 const authRoutes = require('./src/routes/auth_routes');
 const onboardingRoutes = require('./src/routes/onboarding_routes');
@@ -12,6 +13,7 @@ const adminRoutes = require('./src/routes/admin_routes');
 const { resetOrphanedSessions } = require('./src/services/session_service');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
@@ -31,7 +33,12 @@ app.use('/api/admin', adminRoutes);
 // On startup, reset any sessions stuck in streaming state from a previous crash.
 // NOTE: single-instance only. With multiple instances, use a Redis TTL instead.
 async function start() {
-  await resetOrphanedSessions();
+  try {
+    await resetOrphanedSessions();
+  } catch (error) {
+    logError('startup.reset', error);
+    process.exit(1);
+  }
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

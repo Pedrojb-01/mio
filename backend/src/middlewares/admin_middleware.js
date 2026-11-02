@@ -1,4 +1,5 @@
 const prisma = require('../utils/prisma');
+const { logError } = require('../utils/logger');
 
 async function admin(req, res, next) {
   const userId = req.user.id;
@@ -13,7 +14,8 @@ async function admin(req, res, next) {
     }
 
     next();
-  } catch {
+  } catch (error){
+    logError('admin.guard', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }

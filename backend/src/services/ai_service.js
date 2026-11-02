@@ -1,5 +1,6 @@
 const Groq = require('groq-sdk');
 const GROQ_MODEL = process.env.GROQ_MODEL;
+const { logWarn } = require('../utils/logger');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -80,6 +81,7 @@ async function streamResponse(profile, mode, history, userMessage, res) {
     } catch (error) {
       attempt++;
       if (attempt >= maxAttempts) throw error;
+      logWarn('ai.retry', error, { attempt });
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
     }
   }

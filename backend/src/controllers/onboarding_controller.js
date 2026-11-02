@@ -1,5 +1,6 @@
 const { completeOnboarding } = require('../services/onboarding_service');
 const { validateRequiredString, validateOptionalString } = require('../utils/validate');
+const { logError } = require('../utils/logger');
 
 const VALID_VOICE_TONES = ['professional', 'casual', 'inspirational', 'educational', 'humorous'];
 
@@ -46,6 +47,7 @@ async function completeOnboardingController(req, res) {
     if (error.isAppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }
+    logError('onboarding.complete', error, { userId: req.user?.id });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
