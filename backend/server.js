@@ -13,7 +13,7 @@ const adminRoutes = require('./src/routes/admin_routes');
 const { resetOrphanedSessions } = require('./src/services/session_service');
 
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', 3);
 const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
